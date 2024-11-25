@@ -20,9 +20,6 @@ Yogyakarta, yang dikenal sebagai daerah istimewa, memiliki ragam kuliner khas da
 
 ### Daftar Makanan
    
-- Guest (Tidak Login): Bisa melihat daftar makanan berdasarkan kategori
-(Chinese, Western, Indonesia, dll.) dan melihat restoran yang menyajikan
-makanan tersebut. Tidak bisa menambahkan atau mengedit makanan.
 - Admin/Kurator: Bertanggung jawab menambahkan dan mengelola makanan di
 website. Mereka memilih makanan yang ditampilkan, mengelompokkannya berdasarkan kategori, dan memastikan informasi yang ditampilkan akurat dan relevan.
 - User (Login): Bisa melihat daftar makanan, memberikan ulasan, dan menyimpan makanan favorit.
@@ -35,9 +32,7 @@ website. Mereka memilih makanan yang ditampilkan, mengelompokkannya berdasarkan 
   Pada bagian ini yang mengerjakan : Peter Putra Lesmana
 
  ### Pencarian Makanan
-    
-- Guest (Tidak Login): Bisa mencari makanan berdasarkan kategori, atau nama
-makanan
+
 - Admin/Kurator: Dapat mencari makanan yang sudah ada di platform dan
 mengelolanya, termasuk pengelompokan, pengeditan, dan penghapusan.
 - User (Login): Bisa mencari makanan sesuai dengan kategori atau preferensi
@@ -72,7 +67,6 @@ platform, mengedit detail, dan memastikan kategori yang tepat.
 
 ### Review atau Ulasan Pengguna
 
-- Guest (Tidak Login): Hanya bisa melihat ulasan pengguna tentang makanan, tetapi tidak bisa memberikan ulasan.
 - Admin: Dapat memberikan ulasan dan rating pada makanan yang sudah ditampilkan di platform.
 - User (Login): Dapat memberikan ulasan dan rating pada makanan yang sudah ditampilkan di platform.
 - Fields :
@@ -85,7 +79,6 @@ platform, mengedit detail, dan memastikan kategori yang tepat.
 
 ### Artikel
 
-- Guest (Tidak Login): Memiliki akses ke modul artikel.
 - Admin/Kurator: MMemiliki akses ke modul artikel.
 - User (Login): HMemiliki akses ke modul artikel.
 - Fields :
@@ -97,7 +90,6 @@ platform, mengedit detail, dan memastikan kategori yang tepat.
 
 ### Bookmark makanan
    
-- Guest (Tidak Login): Tidak bisa menandai makanan sebagai favorit.
 - Admin/kurator : Dapat melihat berapa banyak bookmark yang diberikan user
 pada makanan tertentu, namun tidak dapat menandai makanan sebagai favorit
 sendiri.
