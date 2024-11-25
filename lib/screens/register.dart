@@ -15,6 +15,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _roleController = TextEditingController();
+  final _budgetController = TextEditingController();
+  final _profileImageController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -61,12 +64,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your username';
-                      }
-                      return null;
-                    },
                   ),
                   const SizedBox(height: 12.0),
                   TextFormField(
@@ -81,12 +78,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     ),
                     obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      return null;
-                    },
                   ),
                   const SizedBox(height: 12.0),
                   TextFormField(
@@ -101,12 +92,46 @@ class _RegisterPageState extends State<RegisterPage> {
                           EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     ),
                     obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please confirm your password';
-                      }
-                      return null;
-                    },
+                  ),
+                  const SizedBox(height: 12.0),
+                  TextFormField(
+                    controller: _roleController,
+                    decoration: const InputDecoration(
+                      labelText: 'Role (buyer/seller)',
+                      hintText: 'Enter your role',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                    ),
+                  ),
+                  const SizedBox(height: 12.0),
+                  TextFormField(
+                    controller: _budgetController,
+                    decoration: const InputDecoration(
+                      labelText: 'Budget',
+                      hintText: 'Enter your budget (optional)',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 12.0),
+                  TextFormField(
+                    controller: _profileImageController,
+                    decoration: const InputDecoration(
+                      labelText: 'Profile Image URL',
+                      hintText: 'Enter a valid image URL (optional)',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                    ),
                   ),
                   const SizedBox(height: 24.0),
                   ElevatedButton(
@@ -114,17 +139,22 @@ class _RegisterPageState extends State<RegisterPage> {
                       String username = _usernameController.text;
                       String password1 = _passwordController.text;
                       String password2 = _confirmPasswordController.text;
+                      String role = _roleController.text;
+                      int budget = int.tryParse(_budgetController.text) ?? 0;
+                      String profileImage = _profileImageController.text;
 
                       // Cek kredensial
-                      // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
-                      // Untuk menyambungkan Android emulator dengan Django pada localhost,
-                      // gunakan URL http://10.0.2.2/
                       final response = await request.postJson(
-                          "http://127.0.0.1:8000/auth/register/",
+                          "http://127.0.0.1:8000/auth/register_app/",
                           jsonEncode({
                             "username": username,
                             "password1": password1,
                             "password2": password2,
+                            "role": role,
+                            "budget": budget,
+                            "profile_image": profileImage.isEmpty
+                                ? "https://tse3.mm.bing.net/th?id=OIP.lLmJV7N4bgAwEBtziWijSQHaJL&pid=Api&P=0&h=180"
+                                : profileImage,
                           }));
                       if (context.mounted) {
                         if (response['status'] == 'success') {
@@ -140,8 +170,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Failed to register!'),
+                            SnackBar(
+                              content: Text(response['message'] ?? 'Failed to register!'),
                             ),
                           );
                         }

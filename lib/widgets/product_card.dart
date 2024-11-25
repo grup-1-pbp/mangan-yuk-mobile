@@ -6,26 +6,23 @@ import 'package:mangan_yuk_mobile/screens/list_foodentry.dart';
 import 'package:mangan_yuk_mobile/screens/login.dart';
 
 class ItemHomepage {
-     final String name;
-     final IconData icon;
-     final Color color;
+  final String name;
+  final IconData icon;
+  final Color color;
 
-     ItemHomepage(this.name, this.icon, this.color);
- }
-
+  ItemHomepage(this.name, this.icon, this.color);
+}
 
 class ItemCard extends StatelessWidget {
-  // Menampilkan kartu dengan ikon dan nama.
-
   final ItemHomepage item;
 
   const ItemCard(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
-        final request = context.watch<CookieRequest>();
+    final request = context.watch<CookieRequest>();
     return Material(
-      color: item.color, // warna bg item
+      color: item.color,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () async {
@@ -34,47 +31,44 @@ class ItemCard extends StatelessWidget {
             ..showSnackBar(
               SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!")),
             );
-            if (item.name == "Tambah Produk") {
+          if (item.name == "Tambah Produk") {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const GoldEntryFormPage(),
               ),
             );
-          }
-          else if (item.name == "Lihat Daftar Produk") {
+          } else if (item.name == "Lihat Daftar Produk") {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const ProductEntryPage(),
+                builder: (context) => const FoodPage(),
               ),
             );
-          }
-          else if (item.name == "Logout") {
-    final response = await request.logout(
-        // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
-        "http://127.0.0.1:8000/auth/logout/");
-    String message = response["message"];
-    if (context.mounted) {
-        if (response['status']) {
-            String uname = response["username"];
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text("$message Sampai jumpa, $uname."),
-            ));
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
+          } else if (item.name == "Logout") {
+            final response = await request.logout(
+              "http://127.0.0.1:8000/auth/logout/",
             );
-        } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+            String message = response["message"];
+            if (context.mounted) {
+              if (response['status']) {
+                String uname = response["username"];
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("$message Sampai jumpa, $uname."),
+                ));
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
                     content: Text(message),
-                ),
-            );
-        }
-    }
-}
-
+                  ),
+                );
+              }
+            }
+          }
         },
         child: Container(
           padding: const EdgeInsets.all(8),
