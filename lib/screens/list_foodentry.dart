@@ -13,25 +13,39 @@ class FoodPage extends StatefulWidget {
 }
 
 class _FoodPageState extends State<FoodPage> {
-  Future<List<Food>> fetchFood(CookieRequest request) async {
-    // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
+ Future<List<Food>> fetchFood(CookieRequest request) async {
+  try {
     final response = await request.get('http://127.0.0.1:8000/json/');
-    print("lewat");
-    // Melakukan decode response menjadi bentuk json
-    var data = response;
-    print("berhasil di app");
+    
+    // Debug print untuk melihat response
+    print('Response: $response');
 
-    // Melakukan konversi data json menjadi object Food
-    List<Food> listFood = [];
-    for (var d in data) {
-      if (d != null) {
-        listFood.add(Food.fromJson(d));
-      }
-      print(d);
+    // Pastikan response adalah List
+    if (response is! List) {
+      print('Invalid response format. Expected List, got: ${response.runtimeType}');
+      return [];
     }
-    return listFood;
-  }
 
+    List<Food> listFood = [];
+    for (var d in response) {
+      try {
+        if (d != null) {
+          var food = Food.fromJson(d);
+          listFood.add(food);
+          print('Successfully parsed food: ${food.fields.name}'); // Debug print
+        }
+      } catch (e) {
+        print('Error parsing food item: $e');
+        print('Problematic data: $d'); // Debug print untuk melihat data yang bermasalah
+      }
+    }
+
+    return listFood;
+  } catch (e) {
+    print('Error in fetchFood: $e');
+    rethrow;
+  }
+}
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();

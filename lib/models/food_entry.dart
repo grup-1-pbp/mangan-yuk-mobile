@@ -1,13 +1,3 @@
-// To parse this JSON data, do
-//
-//     final food = foodFromJson(jsonString);
-
-import 'dart:convert';
-
-List<Food> foodFromJson(String str) => List<Food>.from(json.decode(str).map((x) => Food.fromJson(x)));
-
-String foodToJson(List<Food> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
 class Food {
     String model;
     String pk;
@@ -20,9 +10,9 @@ class Food {
     });
 
     factory Food.fromJson(Map<String, dynamic> json) => Food(
-        model: json["model"],
-        pk: json["pk"],
-        fields: Fields.fromJson(json["fields"]),
+        model: json["model"] ?? "", // Berikan nilai default jika null
+        pk: json["pk"] ?? "",       // Berikan nilai default jika null
+        fields: Fields.fromJson(json["fields"] ?? {}), // Berikan empty map jika null
     );
 
     Map<String, dynamic> toJson() => {
@@ -50,12 +40,12 @@ class Fields {
     });
 
     factory Fields.fromJson(Map<String, dynamic> json) => Fields(
-        name: json["name"],
-        restaurant: json["restaurant"],
-        description: json["description"],
-        price: json["price"],
-        preference: json["preference"],
-        imageUrl: json["image_url"],
+        name: json["name"] ?? "",
+        restaurant: json["restaurant"] ?? "",
+        description: json["description"] ?? "",
+        price: json["price"] ?? "",
+        preference: json["preference"] ?? "",
+        imageUrl: json["image_url"] ?? "", // Perhatikan ini menggunakan "image_url" bukan "imageUrl"
     );
 
     Map<String, dynamic> toJson() => {
@@ -64,6 +54,6 @@ class Fields {
         "description": description,
         "price": price,
         "preference": preference,
-        "image_url": imageUrl,
+        "image_url": imageUrl, // Pastikan menggunakan "image_url" saat mengirim ke server
     };
 }
