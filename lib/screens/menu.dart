@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
 import 'package:mangan_yuk_mobile/widgets/product_card.dart';
+import 'package:mangan_yuk_mobile/screens/foodentry_form.dart'; // Import the foodentry_form.dart page
 
 class ItemHomepage {
   final String title;
@@ -24,7 +25,11 @@ class ItemCard extends StatelessWidget {
           if (item.title == "Lihat Daftar Produk") {
             // Navigate to product list
           } else if (item.title == "Tambah Produk") {
-            // Navigate to add product
+            // Navigate to the food entry form page
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const FoodEntryFormPage()),
+            );
           } else if (item.title == "Logout") {
             // Handle logout
           }
@@ -70,7 +75,6 @@ class MyHomePage extends StatelessWidget {
   final String name = 'Athallah Nadhif Yuzak';
   final String className = 'PBP B';
   
-  // Declare items as final but initialize it as empty
   final List<ItemHomepage> items = [];
 
   @override
@@ -78,7 +82,7 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Toko Emas 86',
+          'Mangan Yuk!',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -108,7 +112,7 @@ class MyHomePage extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.only(top: 16.0),
                     child: Text(
-                      'Welcome to Toko Emas 86!',
+                      'Mangan yuk!',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18.0,

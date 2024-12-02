@@ -5,19 +5,21 @@ import 'package:provider/provider.dart';
 import 'package:mangan_yuk_mobile/screens/menu.dart';
 import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
 
-class GoldEntryFormPage extends StatefulWidget {
-  const GoldEntryFormPage({super.key});
+class FoodEntryFormPage extends StatefulWidget {
+  const FoodEntryFormPage({super.key});
 
   @override
-  State<GoldEntryFormPage> createState() => _GoldEntryFormPageState();
+  State<FoodEntryFormPage> createState() => _FoodEntryFormPageState();
 }
 
-class _GoldEntryFormPageState extends State<GoldEntryFormPage> {
+class _FoodEntryFormPageState extends State<FoodEntryFormPage> {
   final _formKey = GlobalKey<FormState>();
-  String _goldName = '';
-  int _price = 0;
+  String _name = '';
+  String _restaurant = '';
   String _description = '';
-  int _quantity = 0;
+  double _price = 0.0;
+  String _preference = 'Indo'; // Default preference
+  String _imageUrl = '';
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class _GoldEntryFormPageState extends State<GoldEntryFormPage> {
       appBar: AppBar(
         title: const Center(
           child: Text(
-            'Form Jual Emas',
+            'Form Jual Makanan',
           ),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -47,15 +49,15 @@ class _GoldEntryFormPageState extends State<GoldEntryFormPage> {
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: TextFormField(
                     decoration: InputDecoration(
-                      hintText: "Name",
-                      labelText: "Name",
+                      hintText: "Food Name",
+                      labelText: "Food Name",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
                       ),
                     ),
                     onChanged: (String? value) {
                       setState(() {
-                        _goldName = value!;
+                        _name = value!;
                       });
                     },
                     validator: (String? value) {
@@ -67,34 +69,31 @@ class _GoldEntryFormPageState extends State<GoldEntryFormPage> {
                   ),
                 ),
 
-                // Input field for Price
+                // Input field for Restaurant
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: TextFormField(
                     decoration: InputDecoration(
-                      hintText: "Price",
-                      labelText: "Price",
+                      hintText: "Restaurant",
+                      labelText: "Restaurant",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
                       ),
                     ),
-                    keyboardType: TextInputType.number,
                     onChanged: (String? value) {
                       setState(() {
-                        _price = int.tryParse(value ?? '0') ?? 0;
+                        _restaurant = value!;
                       });
                     },
                     validator: (String? value) {
-                      if (value == null || value.isEmpty || int.tryParse(value) == null) {
-                        return "Price harus berupa angka!";
+                      if (value == null || value.isEmpty) {
+                        return "Restaurant tidak boleh kosong!";
                       }
                       return null;
                     },
                   ),
                 ),
 
-                // Input field for Weight
-                
                 // Input field for Description
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -120,26 +119,83 @@ class _GoldEntryFormPageState extends State<GoldEntryFormPage> {
                   ),
                 ),
 
-                // Input field for Quantity
+                // Input field for Price
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: TextFormField(
                     decoration: InputDecoration(
-                      hintText: "Quantity",
-                      labelText: "Quantity",
+                      hintText: "Price",
+                      labelText: "Price",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
                       ),
                     ),
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                     onChanged: (String? value) {
                       setState(() {
-                        _quantity = int.tryParse(value ?? '0') ?? 0;
+                        _price = double.tryParse(value ?? '0.0') ?? 0.0;
                       });
                     },
                     validator: (String? value) {
-                      if (value == null || value.isEmpty || int.tryParse(value) == null) {
-                        return "Quantity harus berupa angka!";
+                      if (value == null || value.isEmpty || double.tryParse(value) == null) {
+                        return "Price harus berupa angka!";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+
+                // Dropdown for Preference
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: DropdownButtonFormField<String>(
+                    value: _preference,
+                    decoration: InputDecoration(
+                      labelText: "Preference",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                    ),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _preference = newValue!;
+                      });
+                    },
+                    items: <String>['Indo', 'Chin', 'West']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return "Preference tidak boleh kosong!";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+
+                // Input field for Image URL
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      hintText: "Image URL",
+                      labelText: "Image URL",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                    ),
+                    onChanged: (String? value) {
+                      setState(() {
+                        _imageUrl = value!;
+                      });
+                    },
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return "Image URL tidak boleh kosong!";
                       }
                       return null;
                     },
@@ -155,12 +211,14 @@ class _GoldEntryFormPageState extends State<GoldEntryFormPage> {
                         if (_formKey.currentState!.validate()) {
                           try {
                             final response = await request.postJson(
-                              "http://127.0.0.1:8000/create-flutter/",
-                              jsonEncode(<String, String>{
-                                'gold_name': _goldName,
+                              "http://127.0.0.1:8000/create-food/", // Ganti endpoint sesuai backend
+                              jsonEncode(<String, dynamic>{
+                                'name': _name,
+                                'restaurant': _restaurant,
+                                'deskripsi': _description,
                                 'price': _price.toString(),
-                                'quantity': _quantity.toString(),
-                                'description': _description
+                                'preference': _preference,
+                                'image_url': _imageUrl
                               }),
                             );
 
