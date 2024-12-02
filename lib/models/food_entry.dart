@@ -37,7 +37,7 @@ class Fields {
     String restaurant;
     String deskripsi;
     String price;
-    Preference preference;
+    String preference;
     String imageUrl;
 
     Fields({
@@ -54,7 +54,7 @@ class Fields {
         restaurant: json["restaurant"],
         deskripsi: json["deskripsi"],
         price: json["price"],
-        preference: preferenceValues.map[json["preference"]]!,
+        preference: json["preference"],
         imageUrl: json["image_url"],
     );
 
