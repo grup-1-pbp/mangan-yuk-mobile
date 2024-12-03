@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mangan_yuk_mobile/screens/list_foodentry.dart';
 import 'package:mangan_yuk_mobile/screens/menu.dart';
 import 'package:mangan_yuk_mobile/screens/foodentry_form.dart';
+import 'package:mangan_yuk_mobile/screens/list_artikelentry.dart';
+import 'package:mangan_yuk_mobile/screens/artikelentry_form.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -58,6 +60,18 @@ class LeftDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const FoodPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.add_reaction_rounded),
+            title: const Text('Daftar Artikel'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ArtikelPage(),
                 ),
               );
             },
