@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:mangan_yuk_mobile/models/food_entry.dart';
+import 'package:mangan_yuk_mobile/screens/list_foodentry.dart';
 
 class EditFoodFormPage extends StatefulWidget {
   final FoodEntry food;
@@ -61,7 +62,11 @@ class _EditFoodFormPageState extends State<EditFoodFormPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Food updated successfully!")),
         );
-        Navigator.pop(context);
+        Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const FoodPage()),
+                                );;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Failed to update food.")),

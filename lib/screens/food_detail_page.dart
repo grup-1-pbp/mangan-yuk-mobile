@@ -57,7 +57,7 @@ class FoodDetailPage extends StatelessWidget {
               "Restaurant: ${food.fields.restaurant}",
               style: const TextStyle(
                 fontSize: 18,
-                color: Colors.grey[600],
+                color: Colors.blue
               ),
             ),
             const SizedBox(height: 10),
@@ -88,7 +88,7 @@ class FoodDetailPage extends StatelessWidget {
               "Preference: ${food.fields.preference}",
               style: const TextStyle(
                 fontSize: 16,
-                color: Colors.grey[700],
+                color: Colors.blue
               ),
             ),
             const SizedBox(height: 20),

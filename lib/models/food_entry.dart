@@ -20,9 +20,11 @@ class FoodEntry {
     });
 
     factory FoodEntry.fromJson(Map<String, dynamic> json) => FoodEntry(
-        model: modelValues.map[json["model"]]!,
-        pk: json["pk"],
-        fields: Fields.fromJson(json["fields"]),
+        // model: modelValues.map[json["model"]]!,
+        model: Model.MAIN_FOOD,
+
+        pk: json["id"],
+        fields: Fields.fromJson(json),
     );
 
     Map<String, dynamic> toJson() => {
