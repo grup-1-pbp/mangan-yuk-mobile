@@ -10,14 +10,14 @@ class FoodDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(food.fields.name),
+        title: Text(food.name),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
             // Gambar Makanan
-            if (food.fields.imageUrl != null && food.fields.imageUrl!.isNotEmpty)
+            if (food.imageUrl != null && food.imageUrl!.isNotEmpty)
               Container(
                 height: 250,
                 decoration: BoxDecoration(
@@ -33,7 +33,7 @@ class FoodDetailPage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.network(
-                    food.fields.imageUrl!,
+                    food.imageUrl!,
                     fit: BoxFit.cover,
                     width: double.infinity,
                   ),
@@ -43,7 +43,7 @@ class FoodDetailPage extends StatelessWidget {
 
             // Detail Nama Makanan
             Text(
-              food.fields.name,
+              food.name,
               style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -54,8 +54,8 @@ class FoodDetailPage extends StatelessWidget {
             
             // Restaurant
             Text(
-              "Restaurant: ${food.fields.restaurant}",
-              style: const TextStyle(
+              "Restaurant: ${food.restaurant}",
+              style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey[600],
               ),
@@ -64,7 +64,7 @@ class FoodDetailPage extends StatelessWidget {
 
             // Deskripsi Makanan
             Text(
-              "Description: ${food.fields.deskripsi}",
+              "Description: ${food.deskripsi}",
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.black54,
@@ -74,7 +74,7 @@ class FoodDetailPage extends StatelessWidget {
 
             // Price
             Text(
-              "Price: \$${food.fields.price}",
+              "Price: \$${food.price}",
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -85,8 +85,8 @@ class FoodDetailPage extends StatelessWidget {
 
             // Preference
             Text(
-              "Preference: ${food.fields.preference}",
-              style: const TextStyle(
+              "Preference: ${food.preference}",
+              style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[700],
               ),

@@ -28,17 +28,18 @@ class _EditFoodFormPageState extends State<EditFoodFormPage> {
   @override
   void initState() {
     super.initState();
-    _name = widget.food.fields.name;
-    _restaurant = widget.food.fields.restaurant;
-    _description = widget.food.fields.deskripsi;
-    _price = double.tryParse(widget.food.fields.price.toString()) ?? 0.0;
+    _name = widget.food.name;
+    _restaurant = widget.food.restaurant;
+    _description = widget.food.deskripsi;
+    _price = double.tryParse(widget.food.price.toString()) ?? 0.0;
 
     // Validasi preference
-    _preference = _validPreferences.contains(widget.food.fields.preference)
-        ? widget.food.fields.preference
-        : _validPreferences[0]; // Default ke 'Indo' jika tidak cocok
+    _preference = _validPreferences.contains(widget.food.preference.toString())
+          ? widget.food.preference.toString()
+          : _validPreferences[0]; // Default to 'Indo' if not valid
 
-    _imageUrl = widget.food.fields.imageUrl ?? '';
+
+    _imageUrl = widget.food.imageUrl ?? '';
   }
 
   Future<void> updateFood(CookieRequest request) async {
@@ -47,7 +48,7 @@ class _EditFoodFormPageState extends State<EditFoodFormPage> {
       final response = await request.postJson(
         url,
         jsonEncode(<String, dynamic>{
-          'id': widget.food.pk,
+          'id': widget.food.id,
           'name': _name,
           'restaurant': _restaurant,
           'deskripsi': _description,

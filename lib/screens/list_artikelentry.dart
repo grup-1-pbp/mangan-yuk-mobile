@@ -97,7 +97,7 @@ class _ArtikelPageState extends State<ArtikelPage> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.network(
-                        artikel.fields.gambarUrl,
+                        artikel.gambarUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: 200,
@@ -105,7 +105,7 @@ class _ArtikelPageState extends State<ArtikelPage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      artikel.fields.judul,
+                      artikel.judul,
                       style: const TextStyle(
                         fontSize: 22.0,
                         fontWeight: FontWeight.bold,
@@ -114,7 +114,7 @@ class _ArtikelPageState extends State<ArtikelPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Isi : ${artikel.fields.isi}",
+                      "Isi : ${artikel.isi}",
                       style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
                     ),
                     const SizedBox(height: 8),
