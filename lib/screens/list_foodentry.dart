@@ -35,19 +35,25 @@ class _FoodPageState extends State<FoodPage> {
         jsonEncode({'id': id}),
       );
       if (response['status'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Food deleted successfully!")),
-        );
-        setState(() {}); // Refresh data
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Food deleted successfully!")),
+          );
+          setState(() {});
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Failed to delete food: ${response['message']}")),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to delete food: ${response['message']}")),
+          );
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: $e")),
+        );
+      }
     }
   }
 
@@ -69,7 +75,7 @@ class _FoodPageState extends State<FoodPage> {
           if (!snapshot.hasData || snapshot.data.isEmpty) {
             return const Center(
               child: Text(
-                'Belum ada data Food tersedia.',
+                'No food data available.',
                 style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
               ),
             );
@@ -80,7 +86,6 @@ class _FoodPageState extends State<FoodPage> {
               final food = snapshot.data[index];
               return GestureDetector(
                 onTap: () {
-                  // Perform action when the card is tapped
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -135,7 +140,7 @@ class _FoodPageState extends State<FoodPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Price: \$${food.price}",
+                        "Price: Rp${food.price}",
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
@@ -185,7 +190,7 @@ class _FoodPageState extends State<FoodPage> {
                                       TextButton(
                                         onPressed: () {
                                           Navigator.pop(context);
-                                          deleteFood(request, food.pk);
+                                          deleteFood(request, food.id);
                                         },
                                         child: const Text("Delete"),
                                       ),
@@ -211,7 +216,6 @@ class _FoodPageState extends State<FoodPage> {
               );
             },
           );
-
         },
       ),
     );

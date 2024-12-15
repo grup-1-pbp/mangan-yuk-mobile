@@ -1,87 +1,90 @@
-// To parse this JSON data, do
-//
-//     final FoodEntry = FoodEntryFromJson(jsonString);
+import 'package:flutter/material.dart';
+import 'package:mangan_yuk_mobile/models/artikel_entry.dart';
 
-import 'dart:convert';
+class ArtikelDetailPage extends StatelessWidget {
+  final ArtikelEntry artikel;
 
-List<FoodEntry> FoodEntryFromJson(String str) => List<FoodEntry>.from(json.decode(str).map((x) => FoodEntry.fromJson(x)));
+  const ArtikelDetailPage({super.key, required this.artikel});
 
-String FoodEntryToJson(List<FoodEntry> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(artikel.fields.judul),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            // Gambar Makanan
+            if (artikel.fields.gambarUrl != null && artikel.fields.gambarUrl!.isNotEmpty)
+              Container(
+                height: 250,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    artikel.fields.gambarUrl!,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  ),
+                ),
+              ),
+            const SizedBox(height: 20),
 
-class FoodEntry {
-    String name;
-    String id;
-    String restaurant;
-    String price;
-    Preference preference;
-    String deskripsi;
-    String imageUrl;
+            // Detail Nama Makanan
+            Text(
+              artikel.fields.judul,
+              style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 10),
+            
 
-    FoodEntry({
-        required this.name,
-        required this.id,
-        required this.restaurant,
-        required this.price,
-        required this.preference,
-        required this.deskripsi,
-        required this.imageUrl,
-    });
 
-    factory FoodEntry.fromJson(Map<String, dynamic> json) => FoodEntry(
-        name: json["name"],
-        id: json["id"],
-        restaurant: json["restaurant"],
-        price: json["price"],
-        preference: preferenceValues.map[json["preference"]]!,
-        deskripsi: json["deskripsi"],
-        imageUrl: json["image_url"],
+            // isi Makanan
+            Text(
+              "Description: ${artikel.fields.isi}",
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.black54,
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            
+
+            // Tombol Kembali
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("Back to List"),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
-
-    Map<String, dynamic> toJson() => {
-        "name": name,
-        "id": id,
-        "restaurant": restaurant,
-        "price": price,
-        "preference": preferenceValues.reverse[preference],
-        "deskripsi": deskripsi,
-        "image_url": imageUrl,
-    };
-}
-
-enum Preference {
-    CHIN,
-    CHINESE,
-    INDIAN,
-    INDO,
-    INDONESIA,
-    JAPANESE,
-    JEPANG,
-    PREFERENCE_WESTERN,
-    WEST,
-    WESTERN
-}
-
-final preferenceValues = EnumValues({
-    "Chin": Preference.CHIN,
-    "Chinese": Preference.CHINESE,
-    "Indian": Preference.INDIAN,
-    "Indo": Preference.INDO,
-    "Indonesia": Preference.INDONESIA,
-    "Japanese": Preference.JAPANESE,
-    "Jepang": Preference.JEPANG,
-    "western": Preference.PREFERENCE_WESTERN,
-    "West": Preference.WEST,
-    "Western": Preference.WESTERN
-});
-
-class EnumValues<T> {
-    Map<String, T> map;
-    late Map<T, String> reverseMap;
-
-    EnumValues(this.map);
-
-    Map<T, String> get reverse {
-            reverseMap = map.map((k, v) => MapEntry(v, k));
-            return reverseMap;
-    }
+  }
 }

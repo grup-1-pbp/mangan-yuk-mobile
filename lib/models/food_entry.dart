@@ -1,10 +1,12 @@
+// To parse this JSON data, do
+//
+//     final FoodEntry = FoodEntryFromJson(jsonString);
+
 import 'dart:convert';
 
-List<FoodEntry> FoodEntryFromJson(String str) =>
-    List<FoodEntry>.from(json.decode(str).map((x) => FoodEntry.fromJson(x)));
+List<FoodEntry> FoodEntryFromJson(String str) => List<FoodEntry>.from(json.decode(str).map((x) => FoodEntry.fromJson(x)));
 
-String FoodEntryToJson(List<FoodEntry> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String FoodEntryToJson(List<FoodEntry> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class FoodEntry {
     String name;
@@ -14,7 +16,7 @@ class FoodEntry {
     Preference preference;
     String deskripsi;
     String imageUrl;
-    bool isBookmarked; // Tambahkan field ini
+    bool isBookmarked; // Add this field
 
     FoodEntry({
         required this.name,
@@ -24,7 +26,8 @@ class FoodEntry {
         required this.preference,
         required this.deskripsi,
         required this.imageUrl,
-        this.isBookmarked = false, // Default value untuk field baru
+        this.isBookmarked = false, // Default value
+        
     });
 
     factory FoodEntry.fromJson(Map<String, dynamic> json) => FoodEntry(
@@ -35,7 +38,7 @@ class FoodEntry {
         preference: preferenceValues.map[json["preference"]]!,
         deskripsi: json["deskripsi"],
         imageUrl: json["image_url"],
-        isBookmarked: json["is_bookmarked"] ?? false, // Menangani JSON dengan isBookmarked
+        isBookmarked: json["is_bookmarked"] ?? false,
     );
 
     Map<String, dynamic> toJson() => {
@@ -46,12 +49,21 @@ class FoodEntry {
         "preference": preferenceValues.reverse[preference],
         "deskripsi": deskripsi,
         "image_url": imageUrl,
-        "is_bookmarked": isBookmarked, // Menyertakan dalam serialisasi JSON
+        "is_bookmarked": isBookmarked,
     };
 }
 
 enum Preference {
-    CHIN, CHINESE, INDIAN, INDO, INDONESIA, JAPANESE, JEPANG, PREFERENCE_WESTERN, WEST, WESTERN
+    CHIN,
+    CHINESE,
+    INDIAN,
+    INDO,
+    INDONESIA,
+    JAPANESE,
+    JEPANG,
+    PREFERENCE_WESTERN,
+    WEST,
+    WESTERN
 }
 
 final preferenceValues = EnumValues({
@@ -74,7 +86,7 @@ class EnumValues<T> {
     EnumValues(this.map);
 
     Map<T, String> get reverse {
-        reverseMap = map.map((k, v) => MapEntry(v, k));
-        return reverseMap;
+            reverseMap = map.map((k, v) => MapEntry(v, k));
+            return reverseMap;
     }
 }

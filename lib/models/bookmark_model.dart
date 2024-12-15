@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:mangan_yuk_mobile/models/food_entry.dart';
+import 'package:mangan_yuk_mobile/screens/artikel_detail_page.dart';
 
 class BookmarkModel {
   String id;

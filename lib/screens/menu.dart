@@ -29,6 +29,7 @@ class ItemCard extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const FoodPage()),
             );
+            // Navigate to product list
           } else if (item.title == "Tambah Produk") {
             // Navigate to the food entry form page
             Navigator.push(
