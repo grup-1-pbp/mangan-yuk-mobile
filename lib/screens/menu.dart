@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangan_yuk_mobile/screens/list_foodentry.dart';
 import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
 import 'package:mangan_yuk_mobile/widgets/product_card.dart';
 import 'package:mangan_yuk_mobile/screens/foodentry_form.dart'; // Import the foodentry_form.dart page
@@ -24,7 +25,10 @@ class ItemCard extends StatelessWidget {
       child: InkWell(
         onTap: () {
           if (item.title == "Lihat Daftar Produk") {
-            // Navigate to product list
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const FoodPage()),
+            );
           } else if (item.title == "Tambah Produk") {
             // Navigate to the food entry form page
             Navigator.push(
