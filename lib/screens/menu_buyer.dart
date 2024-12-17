@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
-import 'package:mangan_yuk_mobile/screens/foodentry_form.dart'; // Import the food entry form page
-import 'package:mangan_yuk_mobile/screens/buyer_list.dart'; // Import the buyer food list page
+import 'package:mangan_yuk_mobile/widgets/product_card.dart';
+import 'package:mangan_yuk_mobile/screens/foodentry_form.dart'; // Import the foodentry_form.dart page
 
 class ItemHomepage {
   final String title;
@@ -23,17 +23,7 @@ class ItemCard extends StatelessWidget {
       child: InkWell(
         onTap: () {
           if (item.title == "Lihat Daftar Produk") {
-            // Navigate to buyer food list page
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const FoodBuyerPage()),
-            );
-          } else if (item.title == "Tambah Produk") {
-            // Navigate to the food entry form page
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const FoodEntryFormPage()),
-            );
+            // Navigate to product list
           } else if (item.title == "Logout") {
             // Handle logout
           }
@@ -70,7 +60,6 @@ class MyHomePage extends StatelessWidget {
     items.addAll([
       ItemHomepage(
           "Lihat Daftar Produk", Icons.card_giftcard, Colors.deepOrange.shade400),
-      ItemHomepage("Tambah Produk", Icons.add, Colors.pink.shade200),
       ItemHomepage("Logout", Icons.logout, Colors.red.shade200),
     ]);
   }

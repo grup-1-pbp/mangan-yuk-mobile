@@ -17,12 +17,12 @@ class FoodDetailPage extends StatelessWidget {
         child: ListView(
           children: [
             // Gambar Makanan
-            if (food.fields.imageUrl != null && food.fields.imageUrl!.isNotEmpty)
+            if (food.fields.imageUrl.isNotEmpty)
               Container(
                 height: 250,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.black26,
                       blurRadius: 8,
