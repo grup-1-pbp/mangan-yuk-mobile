@@ -12,4 +12,8 @@ class Review {
     required this.rating,
     required this.date,
   });
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fcd384fdc2e626abc3f840b0e8c20f8d04ae1497

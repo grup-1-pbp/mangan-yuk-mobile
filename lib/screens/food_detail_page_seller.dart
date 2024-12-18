@@ -10,7 +10,7 @@ class FoodDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(food.fields.name),
+        title: Text(food.name),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -18,23 +18,23 @@ class FoodDetailPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              food.fields.name,
+              food.name,
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 16),
-            Text("Restaurant: ${food.fields.restaurant}"),
+            Text("Restaurant: ${food.restaurant}"),
             const SizedBox(height: 8),
-            Text("Description: ${food.fields.deskripsi}"),
+            Text("Description: ${food.deskripsi}"),
             const SizedBox(height: 8),
-            Text("Price: \$${food.fields.price}"),
+            Text("Price: \$${food.price}"),
             const SizedBox(height: 8),
-            Text("Preference: ${food.fields.preference}"),
+            Text("Preference: ${food.preference}"),
             const SizedBox(height: 16),
-            if (food.fields.imageUrl != null && food.fields.imageUrl!.isNotEmpty)
-              Image.network(food.fields.imageUrl!),
+            if (food.imageUrl.isNotEmpty)
+              Image.network(food.imageUrl),
             const Spacer(),
             Align(
               alignment: Alignment.bottomCenter,

@@ -1,8 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:mangan_yuk_mobile/screens/artikelentry_form.dart';
 import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
-import 'package:mangan_yuk_mobile/widgets/product_card.dart';
-import 'package:mangan_yuk_mobile/screens/foodentry_form.dart'; // Import the foodentry_form.dart page
-import 'package:mangan_yuk_mobile/screens/artikelentry_form.dart'; // Import the foodentry_form.dart page
+import 'package:mangan_yuk_mobile/screens/foodentry_form.dart';
+import 'package:mangan_yuk_mobile/screens/buyer_list.dart';
+import 'package:mangan_yuk_mobile/models/profile.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+
+Future<Profile> fetchUserProfile(CookieRequest request) async {
+  try {
+    final response =
+        await request.get("http://127.0.0.1:8000/auth/user_profile/");
+    print("API RESPONSE: $response");
+
+    if (response['status'] == 'success' && response['data'] != null) {
+      return Profile.fromJson(response['data']);
+    } else {
+      throw Exception(response['message'] ?? 'Invalid response format');
+    }
+  } catch (e) {
+    print("ERROR: $e");
+    throw Exception('Error fetching user profile: $e');
+  }
+}
 
 class ItemHomepage {
   final String title;
@@ -24,25 +44,22 @@ class ItemCard extends StatelessWidget {
       child: InkWell(
         onTap: () {
           if (item.title == "Lihat Daftar Produk") {
-            // Navigate to product list
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const FoodBuyerPage()),
+            );
           } else if (item.title == "Tambah Produk") {
-            // Navigate to the food entry form page
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const FoodEntryFormPage()),
             );
-            
-          }
-          else if (item.title == "Tambah Artikel") {
-            // Navigate to the food entry form page
+          } else if (item.title == "Tambah Artikel") {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ArtikelEntryFormPage()),
             );
-            
-          } 
-          else if (item.title == "Logout") {
-            // Handle logout
+          } else if (item.title == "Logout") {
+            // Handle logout functionality
           }
         },
         child: Container(
@@ -71,23 +88,35 @@ class ItemCard extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({Key? key}) : super(key: key) {
-    // Initialize items in the constructor
-    items.addAll([
-      ItemHomepage(
-          "Lihat Daftar Produk", Icons.card_giftcard, Colors.deepOrange.shade400),
-      ItemHomepage("Tambah Produk", Icons.add, Colors.pink.shade200),
-      ItemHomepage("Tambah Artikel", Icons.add, Colors.pink.shade200),
-      ItemHomepage("Logout", Icons.logout, Colors.red.shade200),
-    ]);
-  }
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key}) : super(key: key);
 
-  final String npm = '2306275651';
-  final String name = 'Athallah Nadhif Yuzak';
-  final String className = 'PBP B';
-  
-  final List<ItemHomepage> items = [];
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  late Future<Profile> _userProfile;
+
+  final List<ItemHomepage> items = [
+    ItemHomepage("Lihat Daftar Produk", Icons.card_giftcard,
+        Colors.deepOrange.shade400),
+    ItemHomepage("Tambah Produk", Icons.add, Colors.pink.shade200),
+    ItemHomepage("Tambah Artikel", Icons.article, Colors.pink.shade200),
+    ItemHomepage("Logout", Icons.logout, Colors.red.shade200),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Pastikan context siap dengan WidgetsBinding.instance
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final request = Provider.of<CookieRequest>(context, listen: false);
+      setState(() {
+        _userProfile = fetchUserProfile(request);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,33 +133,32 @@ class MyHomePage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: const LeftDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InfoCard(title: 'NPM', content: npm),
-                InfoCard(title: 'Name', content: name),
-                InfoCard(title: 'Class', content: className),
-              ],
-            ),
-            const SizedBox(height: 16.0),
-            Expanded(
+      body: FutureBuilder<Profile>(
+        future: _userProfile,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            final user = snapshot.data!;
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      'Mangan yuk!',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      InfoCard(title: 'Name', content: user.name),
+                      InfoCard(title: 'Role', content: user.role),
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage: NetworkImage(user.profileImage),
                       ),
-                    ),
+                    ],
                   ),
+                  const SizedBox(height: 16.0),
                   Expanded(
                     child: GridView.count(
                       primary: true,
@@ -138,7 +166,6 @@ class MyHomePage extends StatelessWidget {
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                       crossAxisCount: 3,
-                      shrinkWrap: true,
                       children: items.map((ItemHomepage item) {
                         return ItemCard(item);
                       }).toList(),
@@ -146,9 +173,9 @@ class MyHomePage extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
+            );
+          }
+        },
       ),
     );
   }

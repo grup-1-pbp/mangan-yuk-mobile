@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mangan_yuk_mobile/models/food_entry.dart';
+import 'package:mangan_yuk_mobile/screens/food_detail_page.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
@@ -77,128 +78,140 @@ class _FoodPageState extends State<FoodPage> {
             itemCount: snapshot.data.length,
             itemBuilder: (_, index) {
               final food = snapshot.data[index];
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16.0),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 8.0,
-                      offset: Offset(0, 6),
+              return GestureDetector(
+                onTap: () {
+                  // Perform action when the card is tapped
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FoodDetailPage(food: food),
                     ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        food.fields.imageUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: 200,
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16.0),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 8.0,
+                        offset: Offset(0, 6),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      food.fields.name,
-                      style: const TextStyle(
-                        fontSize: 22.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal,
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          food.imageUrl,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 200,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Restaurant: ${food.fields.restaurant}",
-                      style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Description: ${food.fields.deskripsi}",
-                      style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Price: \$${food.fields.price}",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green[700],
+                      const SizedBox(height: 16),
+                      Text(
+                        food.name,
+                        style: const TextStyle(
+                          fontSize: 22.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Preference: ${food.fields.preference}",
-                      style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditFoodFormPage(food: food),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Restaurant: ${food.restaurant}",
+                        style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Description: ${food.deskripsi}",
+                        style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Price: \$${food.price}",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green[700],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Preference: ${food.preference}",
+                        style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditFoodFormPage(food: food),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
                             ),
+                            child: const Text("Edit"),
                           ),
-                          child: const Text("Edit"),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text("Delete Food"),
-                                  content: const Text("Are you sure you want to delete this food item?"),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text("Cancel"),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        deleteFood(request, food.pk);
-                                      },
-                                      child: const Text("Delete"),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                          ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text("Delete Food"),
+                                    content: const Text("Are you sure you want to delete this food item?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text("Cancel"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          deleteFood(request, food.pk);
+                                        },
+                                        child: const Text("Delete"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
+                            child: const Text("Delete"),
                           ),
-                          child: const Text("Delete"),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
           );
+
         },
       ),
     );
