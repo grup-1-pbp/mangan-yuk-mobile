@@ -3,7 +3,7 @@ import 'package:mangan_yuk_mobile/screens/login.dart';
 import 'package:mangan_yuk_mobile/screens/menu.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-
+import 'package:mangan_yuk_mobile/providers/review_providers.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,11 +14,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      create: (_) {
-        CookieRequest request = CookieRequest();
-        return request;
-      },
+    return MultiProvider(
+      providers: [
+        Provider<CookieRequest>(
+          create: (_) => CookieRequest(),
+        ),
+        ChangeNotifierProvider<ReviewProvider>(
+          create: (_) => ReviewProvider(),
+        ),
+      ],
       child: MaterialApp(
         title: 'manganYuk',
         theme: ThemeData(
@@ -27,7 +31,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.deepOrange,
           ).copyWith(secondary: Colors.deepOrange[200]),
         ),
-        home: const LoginPage()
+        home: const LoginPage(),
       ),
     );
   }
