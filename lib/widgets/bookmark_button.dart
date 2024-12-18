@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class BookmarkButton extends StatefulWidget {
   final String foodId;
@@ -22,26 +24,20 @@ class _BookmarkButtonState extends State<BookmarkButton> {
   @override
   void initState() {
     super.initState();
-    _isBookmarked = widget.isBookmarked;
+    _isBookmarked = widget.isBookmarked; // Inisialisasi
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      child: IconButton(
-        icon: Icon(
-          _isBookmarked ? Icons.favorite : Icons.favorite_border,
-          color: _isBookmarked ? Colors.red : Colors.grey,
-          size: 35,
-        ),
-        onPressed: () {
-          setState(() {
-            _isBookmarked = !_isBookmarked;
-            widget.onToggle(_isBookmarked);
-          });
-        },
+    return IconButton(
+      icon: Icon(
+        _isBookmarked ? Icons.favorite : Icons.favorite_border,
+        color: _isBookmarked ? Colors.red : Colors.grey,
       ),
+      onPressed: () {
+        // Logika toggle bookmark
+      },
     );
   }
 }
+

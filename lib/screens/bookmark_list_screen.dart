@@ -1,98 +1,72 @@
 import 'package:flutter/material.dart';
-import 'package:mangan_yuk_mobile/widgets/bookmark_button.dart';
-import 'package:mangan_yuk_mobile/models/bookmark_model.dart';
-import 'package:mangan_yuk_mobile/models/food_entry.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '/models/bookmark.dart';
 
-class BookmarkListScreen extends StatefulWidget {
+class BookmarkListScreen extends StatelessWidget {
   const BookmarkListScreen({Key? key}) : super(key: key);
 
-  @override
-  State<BookmarkListScreen> createState() => _BookmarkListScreenState();
-}
+  Future<Bookmark> fetchBookmarks() async {
+    final response = await http.get(Uri.parse('http://localhost:8000/bookmark/flutter/'));
 
-class _BookmarkListScreenState extends State<BookmarkListScreen> {
-  List<FoodEntry> bookmarkedFoods = [];
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    loadBookmarks();
-  }
-
-  void loadBookmarks() {
-    setState(() {
-      bookmarkedFoods = BookmarkModel.getBookmarkedFoods();
-      _isLoading = false;
-    });
+    if (response.statusCode == 200) {
+      return bookmarkFromJson(response.body);
+    } else {
+      throw Exception('Failed to load bookmarks');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Saved Foods'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        title: const Text('Bookmark List'),
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              padding: EdgeInsets.all(20),
-              itemCount: bookmarkedFoods.length,
+      body: FutureBuilder<Bookmark>(
+        future: fetchBookmarks(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            final bookmarks = snapshot.data!.data.likedFood;
+            if (bookmarks.isEmpty) {
+              return const Center(child: Text('No bookmarks found.'));
+            }
+            return ListView.builder(
+              itemCount: bookmarks.length,
               itemBuilder: (context, index) {
-                final food = bookmarkedFoods[index];
+                final bookmark = bookmarks[index];
                 return Card(
-                  margin: EdgeInsets.only(bottom: 16),
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Row(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: ListTile(
+                    leading: Image.network(
+                      bookmark.imageUrl,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.broken_image, size: 50);
+                      },
+                    ),
+                    title: Text(bookmark.name),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            food.imageUrl,
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                food.name,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text('Rp ${food.price}'),
-                              Text(food.restaurant),
-                              Text(preferenceValues.reverse[food.preference]!),
-                            ],
-                          ),
-                        ),
-                        BookmarkButton(
-                          foodId: food.id,
-                          isBookmarked: food.isBookmarked,
-                          onToggle: (isBookmarked) {
-                            setState(() {
-                              food.isBookmarked = isBookmarked;
-                              if (!isBookmarked) {
-                                bookmarkedFoods.remove(food);
-                              }
-                            });
-                          },
-                        ),
+                        Text('Restaurant: ${bookmark.restaurant}'),
+                        Text('Price: ${bookmark.price}'),
                       ],
                     ),
                   ),
                 );
               },
-            ),
+            );
+          } else {
+            return const Center(child: Text('Unexpected error occurred.'));
+          }
+        },
+      ),
     );
   }
 }

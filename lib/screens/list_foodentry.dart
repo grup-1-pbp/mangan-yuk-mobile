@@ -185,7 +185,7 @@ class _FoodPageState extends State<FoodPage> {
                                       TextButton(
                                         onPressed: () {
                                           Navigator.pop(context);
-                                          deleteFood(request, food.pk);
+                                          deleteFood(request, food.id);
                                         },
                                         child: const Text("Delete"),
                                       ),
