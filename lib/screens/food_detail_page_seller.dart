@@ -33,8 +33,8 @@ class FoodDetailPage extends StatelessWidget {
             const SizedBox(height: 8),
             Text("Preference: ${food.preference}"),
             const SizedBox(height: 16),
-            if (food.imageUrl != null && food.imageUrl!.isNotEmpty)
-              Image.network(food.imageUrl!),
+            if (food.imageUrl.isNotEmpty)
+              Image.network(food.imageUrl),
             const Spacer(),
             Align(
               alignment: Alignment.bottomCenter,

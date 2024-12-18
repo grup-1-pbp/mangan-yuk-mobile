@@ -16,6 +16,7 @@ class FoodEntry {
     Preference preference;
     String deskripsi;
     String imageUrl;
+    bool isBookmarked; // Add this field
 
     FoodEntry({
         required this.name,
@@ -25,6 +26,8 @@ class FoodEntry {
         required this.preference,
         required this.deskripsi,
         required this.imageUrl,
+        this.isBookmarked = false, // Default value
+        
     });
 
     factory FoodEntry.fromJson(Map<String, dynamic> json) => FoodEntry(
@@ -35,6 +38,7 @@ class FoodEntry {
         preference: preferenceValues.map[json["preference"]]!,
         deskripsi: json["deskripsi"],
         imageUrl: json["image_url"],
+        isBookmarked: json["is_bookmarked"] ?? false,
     );
 
     Map<String, dynamic> toJson() => {
@@ -45,6 +49,7 @@ class FoodEntry {
         "preference": preferenceValues.reverse[preference],
         "deskripsi": deskripsi,
         "image_url": imageUrl,
+        "is_bookmarked": isBookmarked,
     };
 }
 

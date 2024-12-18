@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangan_yuk_mobile/screens/bookmark_list_screen.dart';
 import 'package:mangan_yuk_mobile/screens/list_foodentry.dart';
 import 'package:mangan_yuk_mobile/screens/menu.dart';
 import 'package:mangan_yuk_mobile/screens/foodentry_form.dart';
@@ -72,6 +73,18 @@ class LeftDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const ArtikelPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.bookmark),
+            title: const Text('My Saved Foods'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const BookmarkListScreen(),
                 ),
               );
             },

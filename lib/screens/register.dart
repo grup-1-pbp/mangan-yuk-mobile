@@ -15,9 +15,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _roleController = TextEditingController();
   final _budgetController = TextEditingController();
   final _profileImageController = TextEditingController();
+  String? selectedRole; // Untuk melacak pilihan role
 
   @override
   Widget build(BuildContext context) {
@@ -94,18 +94,33 @@ class _RegisterPageState extends State<RegisterPage> {
                     obscureText: true,
                   ),
                   const SizedBox(height: 12.0),
-                  TextFormField(
-                    controller: _roleController,
-                    decoration: const InputDecoration(
-                      labelText: 'Role (buyer/seller)',
-                      hintText: 'Enter your role',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                    ),
+
+                  // Pilihan Role dengan RadioListTile
+                  const Text(
+                    'Select your role:',
+                    style: TextStyle(fontSize: 16.0),
                   ),
+                  RadioListTile<String>(
+                    title: const Text('Buyer'),
+                    value: 'buyer',
+                    groupValue: selectedRole,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedRole = value;
+                      });
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('Seller'),
+                    value: 'seller',
+                    groupValue: selectedRole,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedRole = value;
+                      });
+                    },
+                  ),
+
                   const SizedBox(height: 12.0),
                   TextFormField(
                     controller: _budgetController,
@@ -139,9 +154,18 @@ class _RegisterPageState extends State<RegisterPage> {
                       String username = _usernameController.text;
                       String password1 = _passwordController.text;
                       String password2 = _confirmPasswordController.text;
-                      String role = _roleController.text;
+                      String role = selectedRole ?? ''; // Ambil nilai dari radio button
                       int budget = int.tryParse(_budgetController.text) ?? 0;
                       String profileImage = _profileImageController.text;
+
+                      if (role.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please select a role.'),
+                          ),
+                        );
+                        return;
+                      }
 
                       // Cek kredensial
                       final response = await request.postJson(
@@ -171,7 +195,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(response['message'] ?? 'Failed to register!'),
+                              content:
+                                  Text(response['message'] ?? 'Failed to register!'),
                             ),
                           );
                         }
