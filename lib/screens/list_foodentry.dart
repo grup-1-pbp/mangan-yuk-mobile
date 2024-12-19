@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mangan_yuk_mobile/models/food_entry.dart';
-import 'package:mangan_yuk_mobile/screens/food_detail_page.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
@@ -15,16 +14,65 @@ class FoodPage extends StatefulWidget {
 }
 
 class _FoodPageState extends State<FoodPage> {
+  final TextEditingController _searchController = TextEditingController();
+  List<FoodEntry> filteredFoods = [];
+  List<FoodEntry> allFoods = [];
+  bool isLoading = true;
+
   Future<List<FoodEntry>> fetchFood(CookieRequest request) async {
     try {
       final response = await request.get('http://127.0.0.1:8000/json/');
-      if (response is! List) {
-        return [];
-      }
+      if (response is! List) return [];
       return response.map((data) => FoodEntry.fromJson(data)).toList();
     } catch (e) {
       print('Error fetching food: $e');
       return [];
+    }
+  }
+
+  Future<void> performSearch(String query) async {
+    if (query.isEmpty) {
+      setState(() {
+        filteredFoods = allFoods;
+      });
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    // Simulasi pencarian async
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() {
+      filteredFoods = allFoods.where((food) {
+        final matchesName = food.name.toLowerCase().contains(query.toLowerCase());
+        final matchesDescription = food.deskripsi.toLowerCase().contains(query.toLowerCase());
+        return matchesName || matchesDescription;
+      }).toList();
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFoods();
+    _searchController.addListener(() {
+      performSearch(_searchController.text);
+    });
+  }
+
+  Future<void> _loadFoods() async {
+    final request = context.read<CookieRequest>();
+    try {
+      List<FoodEntry> foods = await fetchFood(request);
+      setState(() {
+        allFoods = foods;
+        filteredFoods = foods;
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error loading foods: $e");
+      setState(() => isLoading = false);
     }
   }
 
@@ -38,7 +86,7 @@ class _FoodPageState extends State<FoodPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Food deleted successfully!")),
         );
-        setState(() {}); // Refresh data
+        _loadFoods(); // Reload the food list after deletion
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Failed to delete food: ${response['message']}")),
@@ -52,159 +100,150 @@ class _FoodPageState extends State<FoodPage> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Food Entry List'),
-        backgroundColor: Colors.teal,
+        backgroundColor: const Color(0xFFB23A48),
+        title: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.search, color: Colors.white),
+                  hintText: "Search by name or description...",
+                  filled: true,
+                  fillColor: const Color(0xFFFBE8E7),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       drawer: const LeftDrawer(role: "seller"),
-      body: FutureBuilder(
-        future: fetchFood(request),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData || snapshot.data.isEmpty) {
-            return const Center(
-              child: Text(
-                'Belum ada data Food tersedia.',
-                style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
-              ),
-            );
-          }
-          return ListView.builder(
-            itemCount: snapshot.data.length,
-            itemBuilder: (_, index) {
-              final food = snapshot.data[index];
-              return GestureDetector(
-                child: Container(
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: filteredFoods.length,
+              itemBuilder: (_, index) {
+                final food = filteredFoods[index];
+                return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16.0),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 8.0,
-                        offset: Offset(0, 6),
-                      ),
-                    ],
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Column(
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          bottomLeft: Radius.circular(16),
+                        ),
                         child: Image.network(
                           food.imageUrl,
+                          width: 120,
+                          height: 120,
                           fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: 200,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        food.name,
-                        style: const TextStyle(
-                          fontSize: 22.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.teal,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Restaurant: ${food.restaurant}",
-                        style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Description: ${food.deskripsi}",
-                        style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Price: \$${food.price}",
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green[700],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Preference: ${food.preference}",
-                        style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditFoodFormPage(food: food),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                food.name,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFB23A48),
                                 ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.teal,
-                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
                               ),
-                            ),
-                            child: const Text("Edit"),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text("Delete Food"),
-                                    content: const Text("Are you sure you want to delete this food item?"),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text("Cancel"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          deleteFood(request, food.id);
+                              const SizedBox(height: 4),
+                              Text(
+                                food.deskripsi,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "Price: Rp${food.price}",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => EditFoodFormPage(food: food),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.edit, color: Colors.teal),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text("Delete Food"),
+                                            content: const Text(
+                                                "Are you sure you want to delete this food item?"),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(context),
+                                                child: const Text("Cancel"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  deleteFood(request, food.id);
+                                                },
+                                                child: const Text("Delete"),
+                                              ),
+                                            ],
+                                          );
                                         },
-                                        child: const Text("Delete"),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                  ),
+                                ],
                               ),
-                            ),
-                            child: const Text("Delete"),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              );
-            },
-          );
-
-        },
-      ),
+                );
+              },
+            ),
     );
   }
 }

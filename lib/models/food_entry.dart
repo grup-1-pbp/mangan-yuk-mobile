@@ -46,7 +46,7 @@ class FoodEntry {
         "id": id,
         "restaurant": restaurant,
         "price": price,
-        "preference": preferenceValues.reverse[preference],
+        "preference": [preference],
         "deskripsi": deskripsi,
         "image_url": imageUrl,
         "is_bookmarked": isBookmarked,

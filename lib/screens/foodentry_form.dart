@@ -146,36 +146,36 @@ class _FoodEntryFormPageState extends State<FoodEntryFormPage> {
                 ),
 
                 // Dropdown for Preference
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: DropdownButtonFormField<String>(
-                    value: _preference,
-                    decoration: InputDecoration(
-                      labelText: "Preference",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                    ),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _preference = newValue!;
-                      });
-                    },
-                    items: <String>['Indo', 'Chin', 'West']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return "Preference tidak boleh kosong!";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+                //   child: DropdownButtonFormField<String>(
+                //     value: _preference,
+                //     decoration: InputDecoration(
+                //       labelText: "Preference",
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(5.0),
+                //       ),
+                //     ),
+                //     onChanged: (String? newValue) {
+                //       setState(() {
+                //         _preference = newValue!;
+                //       });
+                //     },
+                //     items: <String>['Indonesia', 'Chinese', 'Western']
+                //         .map<DropdownMenuItem<String>>((String value) {
+                //       return DropdownMenuItem<String>(
+                //         value: value,
+                //         child: Text(value),
+                //       );
+                //     }).toList(),
+                //     validator: (String? value) {
+                //       if (value == null || value.isEmpty) {
+                //         return "Preference tidak boleh kosong!";
+                //       }
+                //       return null;
+                //     },
+                //   ),
+                // ),
 
                 // Input field for Image URL
                 Padding(

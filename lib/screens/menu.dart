@@ -6,6 +6,9 @@ import 'package:mangan_yuk_mobile/screens/foodentry_form.dart';
 import 'package:mangan_yuk_mobile/screens/buyer_list.dart';
 import 'package:mangan_yuk_mobile/models/profile.dart';
 import 'package:mangan_yuk_mobile/screens/login.dart';
+import 'package:mangan_yuk_mobile/screens/list_foodentry.dart';
+import 'package:mangan_yuk_mobile/screens/menu_buyer.dart';
+import 'package:mangan_yuk_mobile/screens/menu_seller.dart';
 
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
@@ -37,7 +40,7 @@ class ItemHomepage {
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
 
-  const ItemCard(this.item, {Key? key}) : super(key: key);
+  const ItemCard(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +53,10 @@ class ItemCard extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const FoodEntryFormPage()),
             );
-          } else if (item.title == "Tambah Artikel") {
-            Navigator.push(
+          } else if (item.title == "Daftar Product") {
+            Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const ArtikelEntryFormPage()),
+              MaterialPageRoute(builder: (context) => const FoodPage()),
             );
           } else if (item.title == "Logout") {
             // Panggil fungsi logout
@@ -113,7 +116,7 @@ Future<void> logout(CookieRequest request, BuildContext context) async {
 
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -124,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<ItemHomepage> items = [
     ItemHomepage("Tambah Produk", Icons.add, Colors.pink.shade200),
-    ItemHomepage("Tambah Artikel", Icons.article, Colors.pink.shade200),
+    ItemHomepage("Lihat Product", Icons.article, Colors.pink.shade200),
     ItemHomepage("Logout", Icons.logout, Colors.red.shade200),
   ];
 
@@ -182,10 +185,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const FoodBuyerPage()),
+                  MaterialPageRoute(builder: (context) => MyHomePageBuyer()), 
                 );
               });
             }
+            else if (user.role == "seller") {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Mengarahkan ke Seller Page')),
+              );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MyHomePageSeller()),
+              );
+            });
+          }
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(

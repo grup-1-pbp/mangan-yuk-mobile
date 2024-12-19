@@ -18,9 +18,7 @@ class _ArtikelPageState extends State<ArtikelPage> {
   Future<List<ArtikelEntry>> fetchArtikel(CookieRequest request) async {
     try {
       final response = await request.get('http://127.0.0.1:8000/artikel/artikel-json/');
-      if (response is! List) {
-        return [];
-      }
+      if (response is! List) return [];
       return response.map((data) => ArtikelEntry.fromJson(data)).toList();
     } catch (e) {
       print('Error fetching artikel: $e');
@@ -56,8 +54,8 @@ class _ArtikelPageState extends State<ArtikelPage> {
     final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Artikel Entry List'),
-        backgroundColor: Colors.teal,
+        title: const Text('Artikel List'),
+        backgroundColor: const Color(0xFFB23A48),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -71,20 +69,20 @@ class _ArtikelPageState extends State<ArtikelPage> {
         ],
       ),
       drawer: const LeftDrawer(role: "unknown"),
-      body: FutureBuilder(
+      body: FutureBuilder<List<ArtikelEntry>>(
         future: fetchArtikel(request),
-        builder: (context, AsyncSnapshot snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (!snapshot.hasData || snapshot.data.isEmpty) {
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Belum ada data Artikel tersedia.',
-                    style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
+                    'No Artikel Data Available',
+                    style: TextStyle(fontSize: 20, color: Color(0xffB23A48)),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
@@ -95,9 +93,9 @@ class _ArtikelPageState extends State<ArtikelPage> {
                       );
                     },
                     icon: const Icon(Icons.add),
-                    label: const Text("Tambah Artikel"),
+                    label: const Text("Add Artikel"),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
+                      backgroundColor: const Color(0xFFB23A48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -110,8 +108,9 @@ class _ArtikelPageState extends State<ArtikelPage> {
           }
           return Column(
             children: [
+              const SizedBox(height: 20), // Spacing between header and content
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: ElevatedButton.icon(
                   onPressed: () {
                     Navigator.push(
@@ -122,7 +121,7 @@ class _ArtikelPageState extends State<ArtikelPage> {
                   icon: const Icon(Icons.add),
                   label: const Text("Tambah Artikel"),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -130,112 +129,111 @@ class _ArtikelPageState extends State<ArtikelPage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 20), // Spacing after button
               Expanded(
                 child: ListView.builder(
-                  itemCount: snapshot.data.length,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: snapshot.data!.length,
                   itemBuilder: (_, index) {
-                    final artikel = snapshot.data[index];
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16.0),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 8.0,
-                            offset: Offset(0, 6),
-                          ),
-                        ],
+                    final artikel = snapshot.data![index];
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 20),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Gambar Artikel
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(16),
+                              topRight: Radius.circular(16),
+                            ),
                             child: Image.network(
                               artikel.fields.gambarUrl,
-                              fit: BoxFit.cover,
+                              height: 300, // Larger image height
                               width: double.infinity,
-                              height: 200,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          Text(
-                            artikel.fields.judul,
-                            style: const TextStyle(
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.teal,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Isi : ${artikel.fields.isi}",
-                            style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          EditArtikelFormPage(artikel: artikel),
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Judul Artikel
+                                Text(
+                                  artikel.fields.judul,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFFB23A48),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+
+                                // Isi Artikel
+                                Text(
+                                  artikel.fields.isi,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+
+                                // Tombol Aksi
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                EditArtikelFormPage(artikel: artikel),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.edit, color: Colors.teal),
+                                      tooltip: 'Edit Artikel',
                                     ),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
+                                    IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: const Text("Delete Artikel"),
+                                              content: const Text(
+                                                  "Are you sure you want to delete this artikel?"),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(context),
+                                                  child: const Text("Cancel"),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                    deleteArtikel(request, artikel.pk);
+                                                  },
+                                                  child: const Text("Delete"),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: const Icon(Icons.delete, color: Colors.red),
+                                      tooltip: 'Delete Artikel',
+                                    ),
+                                  ],
                                 ),
-                                child: const Text("Edit"),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: const Text("Delete artikel"),
-                                        content: const Text(
-                                            "Are you sure you want to delete this artikel item?"),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(context),
-                                            child: const Text("Cancel"),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                              deleteArtikel(request, artikel.pk);
-                                            },
-                                            child: const Text("Delete"),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: const Text("Delete"),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),
