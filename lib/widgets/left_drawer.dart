@@ -24,7 +24,7 @@ class LeftDrawer extends StatelessWidget {
             child: const Column(
               children: [
                 Text(
-                  'Toko Emas 86',
+                  'ManganYuk!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
@@ -60,17 +60,20 @@ class LeftDrawer extends StatelessWidget {
           if (role == "seller")
             ListTile(
               leading: const Icon(Icons.add_reaction_rounded),
+
+              /// ini ganti jadi ke buyer list ya jangan ke seller list
               title: const Text('Daftar Produk'),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
+                    // ganti jadi list yang dibuat abby 
                     builder: (context) => const FoodPage(),
                   ),
                 );
               },
             ),
-          if (role == "unknown")
+          if (role == "buyer")
           ListTile(
             leading: const Icon(Icons.add_reaction_rounded),
             title: const Text('Daftar Artikel'),

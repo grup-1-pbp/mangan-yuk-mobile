@@ -84,7 +84,7 @@ class _EditFoodFormPageState extends State<EditFoodFormPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Food"),
-        backgroundColor: Colors.teal,
+        backgroundColor: const Color(0xFFB23A48),
       ),
       body: Form(
         key: _formKey,
