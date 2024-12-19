@@ -1,7 +1,8 @@
   import 'package:flutter/material.dart';
   import 'package:mangan_yuk_mobile/models/food_entry.dart';
   import 'package:mangan_yuk_mobile/widgets/bookmark_button.dart';
-  import 'package:mangan_yuk_mobile/models/bookmark_model.dart';
+  import 'package:mangan_yuk_mobile/models/bookmark.dart';
+  
 
   class FoodDetailPage extends StatefulWidget {
     final FoodEntry food;
@@ -66,7 +67,7 @@
                     onToggle: (isBookmarked) {
                       setState(() {
                         widget.food.isBookmarked = isBookmarked;
-                        BookmarkModel.toggleBookmark(widget.food);
+                        Bookmark.toggleBookmark(widget.food);
                       });
                     },
                   ),

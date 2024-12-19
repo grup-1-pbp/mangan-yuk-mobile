@@ -79,7 +79,7 @@ class LeftDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.bookmark),
-            title: const Text('My Saved Foods'),
+            title: const Text('Bookmark List'),
             onTap: () {
               Navigator.push(
                 context,
