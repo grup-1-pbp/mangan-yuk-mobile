@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mangan_yuk_mobile/screens/list_foodentry.dart'; // Daftar Product
 import 'package:mangan_yuk_mobile/screens/foodentry_form.dart'; // Tambah Product
 import 'package:mangan_yuk_mobile/screens/login.dart'; // Logout
+import 'package:mangan_yuk_mobile/screens/menu_seller.dart'; // Dashboard
 
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
@@ -41,16 +42,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             child: Icon(Icons.person, size: 40, color: Theme.of(context).colorScheme.primary),
                           ),
                           const SizedBox(width: 12),
-                          const Expanded(
-                            child: Text(
-                              'John Smith',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                          // Spacer digunakan untuk mengisi ruang jika dibutuhkan
+                          const Spacer(),
                         ],
                       ),
                       const SizedBox(height: 10),
@@ -75,6 +68,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const FoodPage()),
+                    );
+                  },
+                ),
+
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.home_max_rounded,
+                  title: 'Home',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MyHomePageSeller()),
                     );
                   },
                 ),

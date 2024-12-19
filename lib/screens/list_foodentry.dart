@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mangan_yuk_mobile/models/food_entry.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
+import 'package:mangan_yuk_mobile/widgets/left_drawer_seller.dart';
 import 'package:mangan_yuk_mobile/screens/edit_food_form.dart';
 
 class FoodPage extends StatefulWidget {
@@ -132,7 +132,7 @@ class _FoodPageState extends State<FoodPage> {
           ],
         ),
       ),
-      drawer: const LeftDrawer(role: "seller"),
+      drawer: const CustomDrawer(),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
