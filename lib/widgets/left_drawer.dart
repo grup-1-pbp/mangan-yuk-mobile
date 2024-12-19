@@ -7,10 +7,13 @@ import 'package:mangan_yuk_mobile/screens/list_artikelentry.dart';
 import 'package:mangan_yuk_mobile/screens/artikelentry_form.dart';
 
 class LeftDrawer extends StatelessWidget {
-  const LeftDrawer({super.key});
+  final String role;
+
+  const LeftDrawer({super.key, required this.role});
 
   @override
   Widget build(BuildContext context) {
+
     return Drawer(
       child: ListView(
         children: [
@@ -48,23 +51,26 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MyHomePage(), // Removed const
+                  builder: (context) => MyHomePage(),
                 ),
               );
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.add_reaction_rounded),
-            title: const Text('Daftar Produk'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const FoodPage(),
-                ),
-              );
-            },
-          ),
+          // Tampilkan hanya jika role bukan "buyer"
+          if (role == "seller")
+            ListTile(
+              leading: const Icon(Icons.add_reaction_rounded),
+              title: const Text('Daftar Produk'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FoodPage(),
+                  ),
+                );
+              },
+            ),
+          if (role == "unknown")
           ListTile(
             leading: const Icon(Icons.add_reaction_rounded),
             title: const Text('Daftar Artikel'),
@@ -77,6 +83,7 @@ class LeftDrawer extends StatelessWidget {
               );
             },
           ),
+          if (role != "seller")
           ListTile(
             leading: const Icon(Icons.bookmark),
             title: const Text('My Saved Foods'),

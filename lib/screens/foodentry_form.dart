@@ -35,7 +35,7 @@ class _FoodEntryFormPageState extends State<FoodEntryFormPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
-      drawer: const LeftDrawer(),
+      drawer: const LeftDrawer(role: "unknown"),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(

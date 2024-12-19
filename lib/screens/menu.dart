@@ -5,6 +5,8 @@ import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
 import 'package:mangan_yuk_mobile/screens/foodentry_form.dart';
 import 'package:mangan_yuk_mobile/screens/buyer_list.dart';
 import 'package:mangan_yuk_mobile/models/profile.dart';
+import 'package:mangan_yuk_mobile/screens/login.dart';
+
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 Future<Profile> fetchUserProfile(CookieRequest request) async {
@@ -42,13 +44,8 @@ class ItemCard extends StatelessWidget {
     return Material(
       color: item.color,
       child: InkWell(
-        onTap: () {
-          if (item.title == "Lihat Daftar Produk") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const FoodBuyerPage()),
-            );
-          } else if (item.title == "Tambah Produk") {
+        onTap: () async {
+          if (item.title == "Tambah Produk") {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const FoodEntryFormPage()),
@@ -59,7 +56,9 @@ class ItemCard extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const ArtikelEntryFormPage()),
             );
           } else if (item.title == "Logout") {
-            // Handle logout functionality
+            // Panggil fungsi logout
+            final request = Provider.of<CookieRequest>(context, listen: false);
+            await logout(request, context);
           }
         },
         child: Container(
@@ -88,6 +87,31 @@ class ItemCard extends StatelessWidget {
   }
 }
 
+// Fungsi logout
+Future<void> logout(CookieRequest request, BuildContext context) async {
+  try {
+    final response = await request.get('http://127.0.0.1:8000/auth/logout-flutter/');
+    if (response['status'] == 'success') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Logout berhasil')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()), // Pastikan LoginPage sudah diimport
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal logout: ${response['message']}')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $e')),
+    );
+  }
+}
+
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
@@ -99,8 +123,6 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<Profile> _userProfile;
 
   final List<ItemHomepage> items = [
-    ItemHomepage("Lihat Daftar Produk", Icons.card_giftcard,
-        Colors.deepOrange.shade400),
     ItemHomepage("Tambah Produk", Icons.add, Colors.pink.shade200),
     ItemHomepage("Tambah Artikel", Icons.article, Colors.pink.shade200),
     ItemHomepage("Logout", Icons.logout, Colors.red.shade200),
@@ -109,7 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    // Pastikan context siap dengan WidgetsBinding.instance
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final request = Provider.of<CookieRequest>(context, listen: false);
       setState(() {
@@ -132,7 +153,19 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      drawer: const LeftDrawer(),
+      drawer: FutureBuilder<Profile>(
+        future: _userProfile,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox.shrink();
+          } else if (snapshot.hasError) {
+            return const LeftDrawer(role: "unknown");
+          } else {
+            final user = snapshot.data!;
+            return LeftDrawer(role: user.role);
+          }
+        },
+      ),
       body: FutureBuilder<Profile>(
         future: _userProfile,
         builder: (context, snapshot) {
@@ -142,6 +175,17 @@ class _MyHomePageState extends State<MyHomePage> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             final user = snapshot.data!;
+            if (user.role == "buyer") {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Mengarahkan ke Buyer Page')),
+                );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const FoodBuyerPage()),
+                );
+              });
+            }
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(

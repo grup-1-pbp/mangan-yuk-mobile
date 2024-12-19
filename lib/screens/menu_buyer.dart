@@ -84,7 +84,7 @@ class MyHomePageBuyer extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      drawer: const LeftDrawer(),
+      drawer: const LeftDrawer(role: "unknown"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

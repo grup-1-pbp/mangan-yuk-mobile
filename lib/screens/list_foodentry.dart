@@ -59,7 +59,7 @@ class _FoodPageState extends State<FoodPage> {
         title: const Text('Food Entry List'),
         backgroundColor: Colors.teal,
       ),
-      drawer: const LeftDrawer(),
+      drawer: const LeftDrawer(role: "seller"),
       body: FutureBuilder(
         future: fetchFood(request),
         builder: (context, AsyncSnapshot snapshot) {
@@ -79,15 +79,6 @@ class _FoodPageState extends State<FoodPage> {
             itemBuilder: (_, index) {
               final food = snapshot.data[index];
               return GestureDetector(
-                onTap: () {
-                  // Perform action when the card is tapped
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => FoodDetailPage(food: food),
-                    ),
-                  );
-                },
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   padding: const EdgeInsets.all(16.0),

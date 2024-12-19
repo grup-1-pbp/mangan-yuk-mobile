@@ -3,6 +3,7 @@ import 'package:mangan_yuk_mobile/models/food_entry.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
+import 'package:mangan_yuk_mobile/screens/food_detail_page.dart'; // Import FoodDetailPage
 
 class FoodBuyerPage extends StatefulWidget {
   const FoodBuyerPage({super.key});
@@ -105,7 +106,7 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
         ),
         backgroundColor: Colors.teal,
       ),
-      drawer: const LeftDrawer(),
+      drawer: const LeftDrawer(role: "unknown"),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _isError
@@ -123,59 +124,70 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
                       itemCount: _filteredFoods.length,
                       itemBuilder: (_, index) {
                         final food = _filteredFoods[index];
-                        return Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          padding: const EdgeInsets.all(16.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.0),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 8.0,
-                                offset: Offset(0, 6),
+                        return GestureDetector(
+                          onTap: () {
+                            // Navigasi ke FoodDetailPage saat kartu ditekan
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FoodDetailPage(food: food),
                               ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.network(
-                                  food.imageUrl,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: 200,
+                            );
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.0),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 8.0,
+                                  offset: Offset(0, 6),
                                 ),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                food.name,
-                                style: const TextStyle(
-                                  fontSize: 22.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.teal,
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(
+                                    food.imageUrl,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 200,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                "Restaurant: ${food.restaurant}",
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: Colors.grey[700],
+                                const SizedBox(height: 16),
+                                Text(
+                                  food.name,
+                                  style: const TextStyle(
+                                    fontSize: 22.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.teal,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                "Price: \$${food.price}",
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green[700],
+                                const SizedBox(height: 8),
+                                Text(
+                                  "Restaurant: ${food.restaurant}",
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Colors.grey[700],
+                                  ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 8),
+                                Text(
+                                  "Price: \$${food.price}",
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green[700],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
