@@ -107,17 +107,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ],
             ),
           ),
-
-          // Collapse Button
-          ListTile(
-            title: Text(isCollapsed ? '' : 'Collapse', style: const TextStyle(fontSize: 16)),
-            leading: Icon(isCollapsed ? Icons.arrow_forward : Icons.arrow_back),
-            onTap: () {
-              setState(() {
-                isCollapsed = !isCollapsed;
-              });
-            },
-          ),
         ],
       ),
     );
