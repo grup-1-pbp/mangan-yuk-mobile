@@ -5,7 +5,8 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
 
 class MyHomePageBuyer extends StatefulWidget {
-  const MyHomePageBuyer({super.key});
+  final String username;
+  const MyHomePageBuyer({super.key, required this.username});
 
   @override
   State<MyHomePageBuyer> createState() => _MyHomePageBuyerState();
@@ -56,7 +57,10 @@ class _MyHomePageBuyerState extends State<MyHomePageBuyer> {
           children: [
             const Text(
               "Mangan Yuk!",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.white),
             ),
             Row(
               children: [
@@ -73,13 +77,14 @@ class _MyHomePageBuyerState extends State<MyHomePageBuyer> {
           ],
         ),
       ),
-      drawer: const LeftDrawer(role: 'buyer'),
+      drawer:  LeftDrawer(role: 'buyer', username: widget.username),
       body: SingleChildScrollView(
         child: Column(
           children: [
             // Card that holds the image as a background
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
               child: Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -133,7 +138,8 @@ class _MyHomePageBuyerState extends State<MyHomePageBuyer> {
                   : GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: 16,
                         crossAxisSpacing: 16,

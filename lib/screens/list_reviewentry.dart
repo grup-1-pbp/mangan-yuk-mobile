@@ -8,17 +8,20 @@ import 'package:mangan_yuk_mobile/screens/reviewentry_form.dart'; // Pastikan in
 
 class ReviewPage extends StatefulWidget {
   final String foodId;
+  final String username;
 
-  const ReviewPage({super.key, required this.foodId});
+  const ReviewPage({super.key, required this.foodId, required this.username});
 
   @override
   State<ReviewPage> createState() => _ReviewPageState();
 }
 
 class _ReviewPageState extends State<ReviewPage> {
-  Future<List<Review>> fetchReviews(CookieRequest request, String foodId) async {
+  Future<List<Review>> fetchReviews(
+      CookieRequest request, String foodId) async {
     try {
-      final response = await request.get('http://127.0.0.1:8000/review/review-json/$foodId/');
+      final response = await request
+          .get('http://127.0.0.1:8000/review/review-json/$foodId/');
       if (response is! List) {
         return [];
       }
@@ -44,7 +47,10 @@ class _ReviewPageState extends State<ReviewPage> {
         title: const Text('Review Entry List'),
         backgroundColor: Colors.teal,
       ),
-      drawer: const LeftDrawer(role: "unknown"),
+      drawer: LeftDrawer(
+        role: "buyer",
+        username: widget.username,
+      ),
       body: FutureBuilder(
         future: fetchReviews(request, widget.foodId),
         builder: (context, AsyncSnapshot snapshot) {
@@ -64,7 +70,8 @@ class _ReviewPageState extends State<ReviewPage> {
             itemBuilder: (_, index) {
               final review = snapshot.data[index];
               return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -98,7 +105,8 @@ class _ReviewPageState extends State<ReviewPage> {
                     const SizedBox(height: 8),
                     Text(
                       "Created at: ${review.fields.createdAt}",
-                      style: const TextStyle(fontSize: 14.0, color: Colors.grey),
+                      style:
+                          const TextStyle(fontSize: 14.0, color: Colors.grey),
                     ),
                   ],
                 ),

@@ -51,7 +51,8 @@ class ItemCard extends StatelessWidget {
           if (item.title == "Tambah Produk") {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const FoodEntryFormPage()),
+              MaterialPageRoute(
+                  builder: (context) => const FoodEntryFormPage()),
             );
           } else if (item.title == "Daftar Product") {
             Navigator.pushReplacement(
@@ -93,14 +94,17 @@ class ItemCard extends StatelessWidget {
 // Fungsi logout
 Future<void> logout(CookieRequest request, BuildContext context) async {
   try {
-    final response = await request.get('http://127.0.0.1:8000/auth/logout-flutter/');
+    final response =
+        await request.get('http://127.0.0.1:8000/auth/logout-flutter/');
     if (response['status'] == 'success') {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Logout berhasil')),
       );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const LoginPage()), // Pastikan LoginPage sudah diimport
+        MaterialPageRoute(
+            builder: (context) =>
+                const LoginPage()), // Pastikan LoginPage sudah diimport
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -113,7 +117,6 @@ Future<void> logout(CookieRequest request, BuildContext context) async {
     );
   }
 }
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -144,6 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -157,16 +161,12 @@ class _MyHomePageState extends State<MyHomePage> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: FutureBuilder<Profile>(
+        
         future: _userProfile,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SizedBox.shrink();
-          } else if (snapshot.hasError) {
-            return const LeftDrawer(role: "unknown");
-          } else {
             final user = snapshot.data!;
-            return LeftDrawer(role: user.role);
-          }
+            return LeftDrawer(role: user.role, username: user.name);
+          
         },
       ),
       body: FutureBuilder<Profile>(
@@ -181,25 +181,25 @@ class _MyHomePageState extends State<MyHomePage> {
             if (user.role == "buyer") {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Mengarahkan ke Buyer Page')),
+                  const SnackBar(content: Text('Mengarahkan ke Buyer Page ')),
                 );
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => MyHomePageBuyer()), 
+                  MaterialPageRoute(builder: (context) => MyHomePageBuyer(username: user.name,)),
+                );
+              });
+            } else if (user.role == "seller") {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Mengarahkan ke Seller Page')),
+                );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MyHomePageSeller()),
                 );
               });
             }
-            else if (user.role == "seller") {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Mengarahkan ke Seller Page')),
-              );
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const MyHomePageSeller()),
-              );
-            });
-          }
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(

@@ -8,15 +8,32 @@ import 'package:mangan_yuk_mobile/screens/list_artikelentry.dart';
 import 'package:mangan_yuk_mobile/screens/artikelentry_form.dart';
 import 'package:mangan_yuk_mobile/screens/login.dart'; // Logout
 
-
-class LeftDrawer extends StatelessWidget {
+class LeftDrawer extends StatefulWidget {
   final String role;
+  final String username;
 
-  const LeftDrawer({super.key, required this.role});
+  const LeftDrawer({
+    super.key,
+    required this.role,
+    required this.username,
+  });
+
+  @override
+  _LeftDrawerState createState() => _LeftDrawerState();
+}
+
+class _LeftDrawerState extends State<LeftDrawer> {
+  late final String uname; // Nilai uname hanya ditentukan sekali
+
+  @override
+  void initState() {
+    super.initState();
+    uname = widget.username; // Tetapkan uname hanya sekali
+    print("uname initialized: $uname"); // Debug log
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Drawer(
       child: ListView(
         children: [
@@ -47,8 +64,7 @@ class LeftDrawer extends StatelessWidget {
               ],
             ),
           ),
-        
-            ListTile(
+          ListTile(
             leading: const Icon(Icons.home_outlined),
             title: const Text('Main Menu'),
             onTap: () {
@@ -66,7 +82,9 @@ class LeftDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                  MaterialPageRoute(builder: (context) => const FoodBuyerPage(),
+                MaterialPageRoute(
+                  builder: (context) =>
+                      FoodBuyerPage(username: uname), // Gunakan uname
                 ),
               );
             },
@@ -78,7 +96,7 @@ class LeftDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ArtikelPage(),
+                  builder: (context) =>  ArtikelPage(username: uname),
                 ),
               );
             },
@@ -90,7 +108,8 @@ class LeftDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const BookmarkListScreen(),
+                  builder: (context) =>
+                      BookmarkListScreen(username: uname), // Gunakan uname
                 ),
               );
             },
@@ -101,7 +120,8 @@ class LeftDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                  MaterialPageRoute(builder: (context) => const LoginPage(),
+                MaterialPageRoute(
+                  builder: (context) => const LoginPage(),
                 ),
               );
             },

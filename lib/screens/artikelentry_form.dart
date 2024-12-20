@@ -32,7 +32,7 @@ class _ArtikelEntryFormPageState extends State<ArtikelEntryFormPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
-      drawer: const LeftDrawer(role: "unknown"),
+      drawer: const LeftDrawer(role: "unknown", username: "  "),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(

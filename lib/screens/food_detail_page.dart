@@ -5,8 +5,9 @@ import 'package:mangan_yuk_mobile/screens/list_reviewentry.dart';
 
 class FoodDetailPage extends StatefulWidget {
   final FoodEntry food;
+  final String username;
 
-  const FoodDetailPage({super.key, required this.food});
+  const FoodDetailPage({super.key, required this.food, required this.username});
 
   @override
   State<FoodDetailPage> createState() => _FoodDetailPageState();
@@ -46,7 +47,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                 ),
               ),
             const SizedBox(height: 20),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -62,6 +62,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                 ),
                 BookmarkButton(
                   foodId: widget.food.id,
+                  username: widget.username, // Pass username
                   isBookmarked: widget.food.isBookmarked,
                   onToggle: (isBookmarked) {
                     setState(() {
@@ -72,7 +73,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               ],
             ),
             const SizedBox(height: 10),
-
             Text(
               "Restaurant: ${widget.food.restaurant}",
               style: TextStyle(
@@ -81,7 +81,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               ),
             ),
             const SizedBox(height: 10),
-
             Text(
               "Description: ${widget.food.deskripsi}",
               style: const TextStyle(
@@ -90,7 +89,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               ),
             ),
             const SizedBox(height: 10),
-
             Text(
               "Price: Rp${widget.food.price}",
               style: const TextStyle(
@@ -100,7 +98,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               ),
             ),
             const SizedBox(height: 10),
-
             Text(
               "Preference: ${widget.food.preference}",
               style: TextStyle(
@@ -109,7 +106,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               ),
             ),
             const SizedBox(height: 20),
-
             Align(
               alignment: Alignment.center,
               child: ElevatedButton(
@@ -119,6 +115,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                       builder: (BuildContext context) {
                         return ReviewPage(
                           foodId: widget.food.id.toString(),
+                          username: widget.username
                         );
                       },
                     ),
@@ -126,7 +123,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                 },
                 child: const Text('See Reviews'),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -134,7 +132,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               ),
             ),
             const SizedBox(height: 20),
-
             Align(
               alignment: Alignment.bottomCenter,
               child: ElevatedButton(
@@ -143,7 +140,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                 },
                 child: const Text("Back to List"),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),

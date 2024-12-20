@@ -8,7 +8,8 @@ import 'package:mangan_yuk_mobile/screens/edit_artikel_form.dart';
 import 'package:mangan_yuk_mobile/screens/artikelentry_form.dart';
 
 class ArtikelPage extends StatefulWidget {
-  const ArtikelPage({super.key});
+  final String username;
+  const ArtikelPage({super.key, required this.username});
 
   @override
   State<ArtikelPage> createState() => _ArtikelPageState();
@@ -68,7 +69,7 @@ class _ArtikelPageState extends State<ArtikelPage> {
           ),
         ],
       ),
-      drawer: const LeftDrawer(role: "unknown"),
+      drawer:  LeftDrawer(role: "unknown", username: widget.username ),
       body: FutureBuilder<List<ArtikelEntry>>(
         future: fetchArtikel(request),
         builder: (context, snapshot) {

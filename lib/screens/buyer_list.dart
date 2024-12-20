@@ -6,7 +6,8 @@ import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
 import 'package:mangan_yuk_mobile/screens/food_detail_page.dart';
 
 class FoodBuyerPage extends StatefulWidget {
-  const FoodBuyerPage({super.key});
+  final String username;
+  const FoodBuyerPage({super.key, required this.username});
 
   @override
   State<FoodBuyerPage> createState() => _FoodBuyerPageState();
@@ -20,7 +21,13 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
   bool _isError = false;
 
   // Desired categories
-  final List<String> categories = ["All", "Indonesian", "Chinese", "Western", "Japanese"];
+  final List<String> categories = [
+    "All",
+    "Indonesian",
+    "Chinese",
+    "Western",
+    "Japanese"
+  ];
   String selectedCategory = "All";
 
   Future<List<FoodEntry>> fetchFood(CookieRequest request) async {
@@ -28,7 +35,8 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
       final response = await request.get('http://127.0.0.1:8000/json/');
 
       if (response is! List) {
-        print('Invalid response format. Expected List, got: ${response.runtimeType}');
+        print(
+            'Invalid response format. Expected List, got: ${response.runtimeType}');
         return [];
       }
 
@@ -90,16 +98,19 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
       List<FoodEntry> filtered = _allFoods;
 
       if (query.isNotEmpty) {
-        filtered = filtered.where((food) =>
-          food.name.toLowerCase().contains(query) ||
-          food.restaurant.toLowerCase().contains(query)
-        ).toList();
+        filtered = filtered
+            .where((food) =>
+                food.name.toLowerCase().contains(query) ||
+                food.restaurant.toLowerCase().contains(query))
+            .toList();
       }
 
       if (selectedCategory != "All") {
-        filtered = filtered.where((food) =>
-          mapPreferenceToCategory(food.preference).toLowerCase() == selectedCategory.toLowerCase()
-        ).toList();
+        filtered = filtered
+            .where((food) =>
+                mapPreferenceToCategory(food.preference).toLowerCase() ==
+                selectedCategory.toLowerCase())
+            .toList();
       }
 
       _filteredFoods = filtered;
@@ -144,7 +155,7 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
         ),
         backgroundColor: Color(0xFFB23A48),
       ),
-      drawer: const LeftDrawer(role: "unknown"),
+      drawer:  LeftDrawer(role: "unknown", username: widget.username),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _isError
@@ -154,53 +165,59 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
               : Column(
                   children: [
                     Container(
-  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-  height: 50,
-  child: Center(
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: categories.map((category) {
-        final isSelected = category == selectedCategory;
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-          child: ChoiceChip(
-            label: Text(
-              category,
-              style: TextStyle(
-                color: isSelected ? Colors.white : Color(0xFFB23A48),
-              ),
-            ),
-            selected: isSelected,
-            onSelected: (bool selected) {
-              if (selected) {
-                _onCategorySelected(category);
-              }
-            },
-            selectedColor: Color(0xFFB23A48),
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(color: Color(0xFFB23A48)),
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        );
-      }).toList(),
-    ),
-  ),
-),
-
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8.0),
+                      height: 50,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: categories.map((category) {
+                            final isSelected = category == selectedCategory;
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                              child: ChoiceChip(
+                                label: Text(
+                                  category,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : Color(0xFFB23A48),
+                                  ),
+                                ),
+                                selected: isSelected,
+                                onSelected: (bool selected) {
+                                  if (selected) {
+                                    _onCategorySelected(category);
+                                  }
+                                },
+                                selectedColor: Color(0xFFB23A48),
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                      color: Color(0xFFB23A48)),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
                     Expanded(
                       child: _filteredFoods.isEmpty
                           ? const Center(
                               child: Text(
                                 'No food available.',
-                                style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
+                                style: TextStyle(
+                                    fontSize: 20, color: Color(0xff59A5D8)),
                               ),
                             )
                           : GridView.builder(
                               padding: const EdgeInsets.all(8.0),
                               itemCount: _filteredFoods.length,
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
                                 crossAxisSpacing: 8.0,
                                 mainAxisSpacing: 8.0,
@@ -213,7 +230,8 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => FoodDetailPage(food: food),
+                                        builder: (context) =>
+                                            FoodDetailPage(food: food, username: widget.username),
                                       ),
                                     );
                                   },
@@ -230,7 +248,8 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
                                       ],
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         ClipRRect(
                                           borderRadius: const BorderRadius.only(
@@ -243,11 +262,14 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
                                             child: Image.network(
                                               food.imageUrl,
                                               fit: BoxFit.cover,
-                                              errorBuilder: (context, error, stackTrace) {
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
                                                 return Container(
                                                   color: Colors.grey[200],
                                                   alignment: Alignment.center,
-                                                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                                                  child: const Icon(
+                                                      Icons.broken_image,
+                                                      color: Colors.grey),
                                                 );
                                               },
                                             ),
@@ -256,7 +278,8 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
                                         Padding(
                                           padding: const EdgeInsets.all(12.0),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 food.name,
