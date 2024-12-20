@@ -71,7 +71,7 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                 if (_contentController.text.isNotEmpty) {
                   try {
                     final response = await request.postJson(
-                      'http://127.0.0.1:8000/review/add-review/${widget.foodId}/', // Endpoint backend
+                      'https://mangan-yuk-production.up.railway.app/review/add-review/${widget.foodId}/', // Endpoint backend
                       jsonEncode({
                         'rating': _rating.toInt(), // Kirim rating
                         'comment': _contentController.text, // Kirim isi review

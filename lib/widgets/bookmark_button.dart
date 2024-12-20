@@ -34,7 +34,7 @@ class _BookmarkButtonState extends State<BookmarkButton> {
 
     try {
       final response = await request.get(
-        "http://127.0.0.1:8000/bookmark/json/${widget.username}/${widget.foodId}/",
+        "https://mangan-yuk-production.up.railway.app/bookmark/json/${widget.username}/${widget.foodId}/",
       );
 
       if (response['liked'] != null) {

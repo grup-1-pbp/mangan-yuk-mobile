@@ -21,7 +21,7 @@ class _FoodPageState extends State<FoodPage> {
 
   Future<List<FoodEntry>> fetchFood(CookieRequest request) async {
     try {
-      final response = await request.get('http://127.0.0.1:8000/json/');
+      final response = await request.get('https://mangan-yuk-production.up.railway.app/json/');
       if (response is! List) return [];
       return response.map((data) => FoodEntry.fromJson(data)).toList();
     } catch (e) {
@@ -79,7 +79,7 @@ class _FoodPageState extends State<FoodPage> {
   Future<void> deleteFood(CookieRequest request, String id) async {
     try {
       final response = await request.postJson(
-        'http://127.0.0.1:8000/delete-product-flutter/',
+        'https://mangan-yuk-production.up.railway.app/delete-product-flutter/',
         jsonEncode({'id': id}),
       );
       if (response['status'] == 'success') {

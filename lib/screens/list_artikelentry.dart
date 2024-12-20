@@ -18,7 +18,7 @@ class ArtikelPage extends StatefulWidget {
 class _ArtikelPageState extends State<ArtikelPage> {
   Future<List<ArtikelEntry>> fetchArtikel(CookieRequest request) async {
     try {
-      final response = await request.get('http://127.0.0.1:8000/artikel/artikel-json/');
+      final response = await request.get('https://mangan-yuk-production.up.railway.app/artikel/artikel-json/');
       if (response is! List) return [];
       return response.map((data) => ArtikelEntry.fromJson(data)).toList();
     } catch (e) {
@@ -30,7 +30,7 @@ class _ArtikelPageState extends State<ArtikelPage> {
   Future<void> deleteArtikel(CookieRequest request, String id) async {
     try {
       final response = await request.postJson(
-        'http://127.0.0.1:8000/artikel/delete-artikel-flutter/',
+        'https://mangan-yuk-production.up.railway.app/artikel/delete-artikel-flutter/',
         jsonEncode({'id': id}),
       );
       if (response['status'] == 'success') {

@@ -21,7 +21,7 @@ class _ReviewPageState extends State<ReviewPage> {
       CookieRequest request, String foodId) async {
     try {
       final response = await request
-          .get('http://127.0.0.1:8000/review/review-json/$foodId/');
+          .get('https://mangan-yuk-production.up.railway.app/review/review-json/$foodId/');
       if (response is! List) {
         return [];
       }

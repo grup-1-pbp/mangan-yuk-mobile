@@ -35,7 +35,7 @@ class _MyHomePageBuyerState extends State<MyHomePageBuyer> {
 
   Future<List<FoodEntry>> fetchFoods(CookieRequest request) async {
     try {
-      final response = await request.get('http://127.0.0.1:8000/json/');
+      final response = await request.get('https://mangan-yuk-production.up.railway.app/json/');
       if (response is! List) return [];
       return response.map((data) => FoodEntry.fromJson(data)).toList();
     } catch (e) {

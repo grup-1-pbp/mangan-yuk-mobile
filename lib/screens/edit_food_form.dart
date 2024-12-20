@@ -40,7 +40,7 @@ class _EditFoodFormPageState extends State<EditFoodFormPage> {
   }
 
   Future<void> updateFood(CookieRequest request) async {
-    final url = 'http://127.0.0.1:8000/update-food/';
+    final url = 'https://mangan-yuk-production.up.railway.app/update-food/';
     try {
       final response = await request.postJson(
         url,

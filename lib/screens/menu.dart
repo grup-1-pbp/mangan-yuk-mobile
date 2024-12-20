@@ -15,7 +15,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 Future<Profile> fetchUserProfile(CookieRequest request) async {
   try {
     final response =
-        await request.get("http://127.0.0.1:8000/auth/user_profile/");
+        await request.get("https://mangan-yuk-production.up.railway.app/auth/user_profile/");
     print("API RESPONSE: $response");
 
     if (response['status'] == 'success' && response['data'] != null) {
@@ -95,7 +95,7 @@ class ItemCard extends StatelessWidget {
 Future<void> logout(CookieRequest request, BuildContext context) async {
   try {
     final response =
-        await request.get('http://127.0.0.1:8000/auth/logout-flutter/');
+        await request.get('https://mangan-yuk-production.up.railway.app/auth/logout-flutter/');
     if (response['status'] == 'success') {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Logout berhasil')),

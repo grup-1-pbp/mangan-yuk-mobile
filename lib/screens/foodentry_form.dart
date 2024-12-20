@@ -211,7 +211,7 @@ class _FoodEntryFormPageState extends State<FoodEntryFormPage> {
                         if (_formKey.currentState!.validate()) {
                           try {
                             final response = await request.postJson(
-                              "http://127.0.0.1:8000/create-food/", // Ganti endpoint sesuai backend
+                              "https://mangan-yuk-production.up.railway.app/create-food/", // Ganti endpoint sesuai backend
                               jsonEncode(<String, dynamic>{
                                 'name': _name,
                                 'restaurant': _restaurant,

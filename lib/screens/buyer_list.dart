@@ -32,7 +32,7 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
 
   Future<List<FoodEntry>> fetchFood(CookieRequest request) async {
     try {
-      final response = await request.get('http://127.0.0.1:8000/json/');
+      final response = await request.get('https://mangan-yuk-production.up.railway.app/json/');
 
       if (response is! List) {
         print(
@@ -303,7 +303,7 @@ class _FoodBuyerPageState extends State<FoodBuyerPage> {
                                               ),
                                               const SizedBox(height: 6),
                                               Text(
-                                                "Price: \$${food.price}",
+                                                "Price: \Rp${food.price}",
                                                 style: const TextStyle(
                                                   fontSize: 14.0,
                                                   fontWeight: FontWeight.bold,

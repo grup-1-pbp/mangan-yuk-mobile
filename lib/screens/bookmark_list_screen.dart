@@ -12,7 +12,7 @@ class BookmarkListScreen extends StatelessWidget {
       BuildContext context, String username) async {
     print("Fetching bookmarks for username: $username"); // Log username
     final response = await Provider.of<CookieRequest>(context, listen: false)
-        .get("http://127.0.0.1:8000/bookmark/json/$username/");
+        .get("https://mangan-yuk-production.up.railway.app/bookmark/json/$username/");
     if (response['status'] == 'success' && response['data'] != null) {
       return Bookmark.fromJsonList(response['data']);
     } else {
