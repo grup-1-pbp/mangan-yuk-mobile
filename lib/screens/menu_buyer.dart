@@ -5,26 +5,20 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
 
 class MyHomePageBuyer extends StatefulWidget {
-  const MyHomePageBuyer({super.key});
+  final String username;
+  const MyHomePageBuyer({super.key, required this.username});
 
   @override
   State<MyHomePageBuyer> createState() => _MyHomePageBuyerState();
 }
 
 class _MyHomePageBuyerState extends State<MyHomePageBuyer> {
-  final List<String> categories = ["Indonesian", "Chinese", "Western", "Japanese"];
-  String selectedCategory = "Indonesian";
   List<FoodEntry> allFoods = [];
-  List<FoodEntry> filteredFoods = [];
-  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _loadFoods(); // Load foods from the API
-    _searchController.addListener(() {
-      _filterFoods(); // Apply search filters
-    });
+    _loadFoods();
   }
 
   Future<void> _loadFoods() async {
@@ -33,7 +27,6 @@ class _MyHomePageBuyerState extends State<MyHomePageBuyer> {
       final foods = await fetchFoods(request);
       setState(() {
         allFoods = foods;
-        filteredFoods = foods;
       });
     } catch (e) {
       print("Error loading foods: $e");
@@ -51,23 +44,6 @@ class _MyHomePageBuyerState extends State<MyHomePageBuyer> {
     }
   }
 
-  void _filterFoods() {
-    final query = _searchController.text.toLowerCase();
-    setState(() {
-      filteredFoods = allFoods
-          .where((food) =>
-              food.name.toLowerCase().contains(query) ||
-              food.deskripsi.toLowerCase().contains(query))
-          .toList();
-    });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final themeColor = const Color(0xFFB23A48);
@@ -80,8 +56,11 @@ class _MyHomePageBuyerState extends State<MyHomePageBuyer> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              "LOGO",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              "Mangan Yuk!",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.white),
             ),
             Row(
               children: [
@@ -98,98 +77,77 @@ class _MyHomePageBuyerState extends State<MyHomePageBuyer> {
           ],
         ),
       ),
-      drawer: const LeftDrawer(role: 'buyer'), // Implementasi Drawer
-      body: Column(
-        children: [
-          // Search Bar
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: "Cari Makanan",
-                prefixIcon: const Icon(Icons.search, color: Color(0xFFB23A48)),
-                filled: true,
-                fillColor: const Color(0xFFFBE8E7),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
+      drawer:  LeftDrawer(role: 'buyer', username: widget.username),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Card that holds the image as a background
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                clipBehavior: Clip.antiAlias,
+                elevation: 4,
+                child: Container(
+                  height: 250,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/background1.jpg'),
+                      fit: BoxFit.cover, // fill the card area completely
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Welcome to Mangan Yuk!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 4,
+                            color: Colors.black54,
+                            offset: Offset(2, 2),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
 
-          // Image Banner
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Container(
-              height: 150,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-          ),
-
-          // Category Tabs
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: categories.map((category) {
-                  final isSelected = category == selectedCategory;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: ChoiceChip(
-                      label: Text(
-                        category,
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : themeColor,
-                        ),
-                      ),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          selectedCategory = category;
-                        });
-                      },
-                      selectedColor: themeColor,
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(color: themeColor),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Food Grid
-          Expanded(
-            child: Padding(
+            // Food cards section
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: filteredFoods.isEmpty
+              child: allFoods.isEmpty
                   ? const Center(
-                      child: Text(
-                        "No Foods Available",
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 50.0),
+                        child: Text(
+                          "No Foods Available",
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
                       ),
                     )
                   : GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: 16,
                         crossAxisSpacing: 16,
-                        childAspectRatio: 1,
+                        childAspectRatio: 1.6,
                       ),
-                      itemCount: filteredFoods.length,
+                      itemCount: allFoods.length,
                       itemBuilder: (context, index) {
-                        final food = filteredFoods[index];
+                        final food = allFoods[index];
                         return Card(
                           elevation: 4,
                           shape: RoundedRectangleBorder(
@@ -241,7 +199,7 @@ class _MyHomePageBuyerState extends State<MyHomePageBuyer> {
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    const SizedBox(height: 8)
+                                    const SizedBox(height: 8),
                                   ],
                                 ),
                               ),
@@ -251,8 +209,8 @@ class _MyHomePageBuyerState extends State<MyHomePageBuyer> {
                       },
                     ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
