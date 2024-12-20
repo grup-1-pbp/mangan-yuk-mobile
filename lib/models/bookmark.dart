@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:mangan_yuk_mobile/models/food_entry.dart';
+
 Bookmark bookmarkFromJson(String str) => Bookmark.fromJson(json.decode(str));
 
 String bookmarkToJson(Bookmark data) => json.encode(data.toJson());
@@ -7,11 +9,18 @@ String bookmarkToJson(Bookmark data) => json.encode(data.toJson());
 class Bookmark {
     String status;
     Data data;
+    static List<FoodEntry> _bookmarkedFoods = [];
 
     Bookmark({
         required this.status,
         required this.data,
     });
+
+
+    // Added getBookmarkedFoods method
+    static List<FoodEntry> getBookmarkedFoods() {
+        return _bookmarkedFoods;
+    }
 
     factory Bookmark.fromJson(Map<String, dynamic> json) => Bookmark(
         status: json["status"],
@@ -22,7 +31,18 @@ class Bookmark {
         "status": status,
         "data": data.toJson(),
     };
+
+    static List<FoodEntry> get bookmarkedFoods => _bookmarkedFoods;
+
+    static void toggleBookmark(FoodEntry food) {
+        if (_bookmarkedFoods.contains(food)) {
+            _bookmarkedFoods.remove(food);
+        } else {
+            _bookmarkedFoods.add(food);
+        }
+    }
 }
+
 
 class Data {
     List<LikedFood> likedFood;
