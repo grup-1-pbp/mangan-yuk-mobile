@@ -101,3 +101,6 @@ mereka, melihat makanan yang telah mereka tandai, dan menghapus penanda.
   - Nama makanan, harga, kategori, restoran terkait
   
   Pada bagian ini yang mengerjakan : Ammara Fasha Zia
+
+## Link Deployment
+https://install.appcenter.ms/orgs/mangan-yuk-mobile/apps/mangan-yuk/distribution_groups/public
