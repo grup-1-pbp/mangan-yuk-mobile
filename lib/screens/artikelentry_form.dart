@@ -32,7 +32,7 @@ class _ArtikelEntryFormPageState extends State<ArtikelEntryFormPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
-      drawer: const LeftDrawer(),
+      drawer: const LeftDrawer(role: "unknown", username: "  "),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -128,7 +128,7 @@ class _ArtikelEntryFormPageState extends State<ArtikelEntryFormPage> {
                         if (_formKey.currentState!.validate()) {
                           try {
                             final response = await request.postJson(
-                              "http://127.0.0.1:8000/artikel/create-artikel/", // Ganti endpoint sesuai backend
+                              "https://mangan-yuk-production.up.railway.app/artikel/create-artikel/", // Ganti endpoint sesuai backend
                               jsonEncode(<String, dynamic>{
                                 'judul': _judul,
                                 'isi': _isi,                              

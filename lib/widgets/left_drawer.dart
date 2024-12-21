@@ -1,13 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:mangan_yuk_mobile/screens/bookmark_list_screen.dart';
+import 'package:mangan_yuk_mobile/screens/buyer_list.dart';
 import 'package:mangan_yuk_mobile/screens/list_foodentry.dart';
 import 'package:mangan_yuk_mobile/screens/menu.dart';
 import 'package:mangan_yuk_mobile/screens/foodentry_form.dart';
 import 'package:mangan_yuk_mobile/screens/list_artikelentry.dart';
 import 'package:mangan_yuk_mobile/screens/artikelentry_form.dart';
+import 'package:mangan_yuk_mobile/screens/login.dart'; // Logout
 
-class LeftDrawer extends StatelessWidget {
-  const LeftDrawer({super.key});
+class LeftDrawer extends StatefulWidget {
+  final String role;
+  final String username;
+
+  const LeftDrawer({
+    super.key,
+    required this.role,
+    required this.username,
+  });
+
+  @override
+  _LeftDrawerState createState() => _LeftDrawerState();
+}
+
+class _LeftDrawerState extends State<LeftDrawer> {
+  late final String uname; // Nilai uname hanya ditentukan sekali
+
+  @override
+  void initState() {
+    super.initState();
+    uname = widget.username; // Tetapkan uname hanya sekali
+    print("uname initialized: $uname"); // Debug log
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +44,7 @@ class LeftDrawer extends StatelessWidget {
             child: const Column(
               children: [
                 Text(
-                  'Toko Emas 86',
+                  'ManganYuk!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
@@ -31,7 +54,7 @@ class LeftDrawer extends StatelessWidget {
                 ),
                 Padding(padding: EdgeInsets.all(8)),
                 Text(
-                  "Ayo jual beli emas ditempat yang aman dan nyaman!",
+                  "Nikmati masakan khas Yogyakarta!",
                   style: TextStyle(
                     fontSize: 15,
                     color: Colors.white,
@@ -48,19 +71,20 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MyHomePage(), // Removed const
+                  builder: (context) => MyHomePage(),
                 ),
               );
             },
           ),
           ListTile(
-            leading: const Icon(Icons.add_reaction_rounded),
-            title: const Text('Daftar Produk'),
+            leading: const Icon(Icons.food_bank),
+            title: const Text('Daftar Menu'),
             onTap: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const FoodPage(),
+                  builder: (context) =>
+                      FoodBuyerPage(username: uname), // Gunakan uname
                 ),
               );
             },
@@ -72,7 +96,7 @@ class LeftDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ArtikelPage(),
+                  builder: (context) =>  ArtikelPage(username: uname),
                 ),
               );
             },
@@ -84,7 +108,20 @@ class LeftDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const BookmarkListScreen(),
+                  builder: (context) =>
+                      BookmarkListScreen(username: uname), // Gunakan uname
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginPage(),
                 ),
               );
             },

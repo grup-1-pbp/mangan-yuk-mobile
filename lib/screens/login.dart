@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                       String password = _passwordController.text;
 
                       final response = await request
-                          .login("http://127.0.0.1:8000/auth/login_app/", {
+                          .login("https://mangan-yuk-production.up.railway.app/auth/login_app/", {
                         'username': username,
                         'password': password,
                       });
@@ -112,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MyHomePage()),
+                                builder: (context) => const MyHomePage()),
                           );
                           ScaffoldMessenger.of(context)
                             ..hideCurrentSnackBar()

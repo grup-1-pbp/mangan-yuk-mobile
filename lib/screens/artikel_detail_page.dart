@@ -10,23 +10,28 @@ class ArtikelDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(artikel.fields.judul),
+        backgroundColor: const Color(0xFFB23A48), // Warna tema utama
+        title: Text(
+          artikel.fields.judul,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Gambar Makanan
+            // Gambar Artikel
             if (artikel.fields.gambarUrl != null && artikel.fields.gambarUrl!.isNotEmpty)
               Container(
-                height: 250,
+                height: 200,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black26,
+                      color: Colors.black12.withOpacity(0.3),
                       blurRadius: 8,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -41,44 +46,51 @@ class ArtikelDetailPage extends StatelessWidget {
               ),
             const SizedBox(height: 20),
 
-            // Detail Nama Makanan
+            // Judul Artikel
             Text(
               artikel.fields.judul,
               style: const TextStyle(
-                fontSize: 28,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Color(0xFFB23A48),
               ),
             ),
-            const SizedBox(height: 10),
-            
+            const SizedBox(height: 8),
 
-
-            // isi Makanan
-            Text(
-              "Description: ${artikel.fields.isi}",
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black54,
+            // Isi Artikel
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
+                  artikel.fields.isi,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    height: 1.5,
+                    color: Colors.black87,
+                  ),
+                ),
               ),
             ),
-            const SizedBox(height: 10),
 
-            
+            const SizedBox(height: 20),
 
             // Tombol Kembali
             Align(
-              alignment: Alignment.bottomCenter,
-              child: ElevatedButton(
+              alignment: Alignment.center,
+              child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text("Back to List"),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                  backgroundColor: const Color(0xFFB23A48), // Warna tombol
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
+                ),
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                label: const Text(
+                  "Back to List",
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),

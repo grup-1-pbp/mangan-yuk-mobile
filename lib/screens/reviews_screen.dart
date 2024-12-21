@@ -3,6 +3,12 @@ import 'package:provider/provider.dart';
 import '../providers/review_provider.dart';
 import 'add_review_screen.dart';
 
+@override
+void initState() {
+  super.initState();
+  Provider.of<ReviewProvider>(context, listen: false)
+      .fetchReviews(widget.foodId);
+}
 class ReviewsScreen extends StatelessWidget {
   // Fungsi untuk menghitung rata-rata rating
   double _calculateAverageRating(List<dynamic> reviews) {

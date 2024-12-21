@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:mangan_yuk_mobile/models/food_entry.dart';
+import 'package:mangan_yuk_mobile/screens/list_foodentry.dart';
 
 class EditFoodFormPage extends StatefulWidget {
   final FoodEntry food;
@@ -32,18 +33,14 @@ class _EditFoodFormPageState extends State<EditFoodFormPage> {
     _restaurant = widget.food.restaurant;
     _description = widget.food.deskripsi;
     _price = double.tryParse(widget.food.price.toString()) ?? 0.0;
-
-    // Validasi preference
     _preference = _validPreferences.contains(widget.food.preference.toString())
-          ? widget.food.preference.toString()
-          : _validPreferences[0]; // Default to 'Indo' if not valid
-
-
+        ? widget.food.preference.toString()
+        : _validPreferences[0]; // Default ke 'Indo' jika tidak valid
     _imageUrl = widget.food.imageUrl ?? '';
   }
 
   Future<void> updateFood(CookieRequest request) async {
-    final url = 'http://127.0.0.1:8000/update-food/';
+    final url = 'https://mangan-yuk-production.up.railway.app/update-food/';
     try {
       final response = await request.postJson(
         url,
@@ -62,7 +59,13 @@ class _EditFoodFormPageState extends State<EditFoodFormPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Food updated successfully!")),
         );
-        Navigator.pop(context);
+
+        // Redirect ke halaman FoodPage setelah update
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const FoodPage()),
+          (route) => false, // Remove semua route sebelumnya
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Failed to update food.")),
@@ -81,7 +84,7 @@ class _EditFoodFormPageState extends State<EditFoodFormPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Food"),
-        backgroundColor: Colors.teal,
+        backgroundColor: const Color(0xFFB23A48),
       ),
       body: Form(
         key: _formKey,

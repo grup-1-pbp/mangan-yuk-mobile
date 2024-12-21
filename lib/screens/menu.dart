@@ -5,12 +5,17 @@ import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
 import 'package:mangan_yuk_mobile/screens/foodentry_form.dart';
 import 'package:mangan_yuk_mobile/screens/buyer_list.dart';
 import 'package:mangan_yuk_mobile/models/profile.dart';
+import 'package:mangan_yuk_mobile/screens/login.dart';
+import 'package:mangan_yuk_mobile/screens/list_foodentry.dart';
+import 'package:mangan_yuk_mobile/screens/menu_buyer.dart';
+import 'package:mangan_yuk_mobile/screens/menu_seller.dart';
+
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 Future<Profile> fetchUserProfile(CookieRequest request) async {
   try {
     final response =
-        await request.get("http://127.0.0.1:8000/auth/user_profile/");
+        await request.get("https://mangan-yuk-production.up.railway.app/auth/user_profile/");
     print("API RESPONSE: $response");
 
     if (response['status'] == 'success' && response['data'] != null) {
@@ -35,31 +40,29 @@ class ItemHomepage {
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
 
-  const ItemCard(this.item, {Key? key}) : super(key: key);
+  const ItemCard(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: item.color,
       child: InkWell(
-        onTap: () {
-          if (item.title == "Lihat Daftar Produk") {
+        onTap: () async {
+          if (item.title == "Tambah Produk") {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const FoodBuyerPage()),
+              MaterialPageRoute(
+                  builder: (context) => const FoodEntryFormPage()),
             );
-          } else if (item.title == "Tambah Produk") {
-            Navigator.push(
+          } else if (item.title == "Daftar Product") {
+            Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const FoodEntryFormPage()),
-            );
-          } else if (item.title == "Tambah Artikel") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ArtikelEntryFormPage()),
+              MaterialPageRoute(builder: (context) => const FoodPage()),
             );
           } else if (item.title == "Logout") {
-            // Handle logout functionality
+            // Panggil fungsi logout
+            final request = Provider.of<CookieRequest>(context, listen: false);
+            await logout(request, context);
           }
         },
         child: Container(
@@ -88,8 +91,35 @@ class ItemCard extends StatelessWidget {
   }
 }
 
+// Fungsi logout
+Future<void> logout(CookieRequest request, BuildContext context) async {
+  try {
+    final response =
+        await request.get('https://mangan-yuk-production.up.railway.app/auth/logout-flutter/');
+    if (response['status'] == 'success') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Logout berhasil')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                const LoginPage()), // Pastikan LoginPage sudah diimport
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal logout: ${response['message']}')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $e')),
+    );
+  }
+}
+
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -99,17 +129,14 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<Profile> _userProfile;
 
   final List<ItemHomepage> items = [
-    ItemHomepage("Lihat Daftar Produk", Icons.card_giftcard,
-        Colors.deepOrange.shade400),
     ItemHomepage("Tambah Produk", Icons.add, Colors.pink.shade200),
-    ItemHomepage("Tambah Artikel", Icons.article, Colors.pink.shade200),
+    ItemHomepage("Lihat Product", Icons.article, Colors.pink.shade200),
     ItemHomepage("Logout", Icons.logout, Colors.red.shade200),
   ];
 
   @override
   void initState() {
     super.initState();
-    // Pastikan context siap dengan WidgetsBinding.instance
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final request = Provider.of<CookieRequest>(context, listen: false);
       setState(() {
@@ -120,6 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -132,7 +160,15 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      drawer: const LeftDrawer(),
+      drawer: FutureBuilder<Profile>(
+        
+        future: _userProfile,
+        builder: (context, snapshot) {
+            final user = snapshot.data!;
+            return LeftDrawer(role: user.role, username: user.name);
+          
+        },
+      ),
       body: FutureBuilder<Profile>(
         future: _userProfile,
         builder: (context, snapshot) {
@@ -142,6 +178,28 @@ class _MyHomePageState extends State<MyHomePage> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             final user = snapshot.data!;
+            if (user.role == "buyer") {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Mengarahkan ke Buyer Page ')),
+                );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyHomePageBuyer(username: user.name,)),
+                );
+              });
+            } else if (user.role == "seller") {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Mengarahkan ke Seller Page')),
+                );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MyHomePageSeller()),
+                );
+              });
+            }
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(

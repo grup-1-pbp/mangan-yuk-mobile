@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class BookmarkButton extends StatefulWidget {
   final String foodId;
+  final String username; // Tambahkan username sebagai parameter
   final bool isBookmarked;
   final Function(bool) onToggle;
 
   const BookmarkButton({
     Key? key,
     required this.foodId,
+    required this.username,
     required this.isBookmarked,
     required this.onToggle,
   }) : super(key: key);
@@ -25,6 +29,31 @@ class _BookmarkButtonState extends State<BookmarkButton> {
     _isBookmarked = widget.isBookmarked;
   }
 
+  Future<void> _toggleBookmark(BuildContext context) async {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+
+    try {
+      final response = await request.get(
+        "https://mangan-yuk-production.up.railway.app/bookmark/json/${widget.username}/${widget.foodId}/",
+      );
+
+      if (response['liked'] != null) {
+        setState(() {
+          _isBookmarked = response['liked'];
+        });
+        widget.onToggle(_isBookmarked);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Failed to toggle bookmark.")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,10 +65,7 @@ class _BookmarkButtonState extends State<BookmarkButton> {
           size: 35,
         ),
         onPressed: () {
-          setState(() {
-            _isBookmarked = !_isBookmarked;
-            widget.onToggle(_isBookmarked);
-          });
+          _toggleBookmark(context);
         },
       ),
     );

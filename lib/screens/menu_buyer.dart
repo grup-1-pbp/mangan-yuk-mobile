@@ -1,161 +1,214 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:mangan_yuk_mobile/models/food_entry.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
-import 'package:mangan_yuk_mobile/widgets/product_card.dart';
-import 'package:mangan_yuk_mobile/screens/foodentry_form.dart'; // Import the foodentry_form.dart page
 
-class ItemHomepage {
-  final String title;
-  final IconData icon;
-  final Color color;
+class MyHomePageBuyer extends StatefulWidget {
+  final String username;
+  const MyHomePageBuyer({super.key, required this.username});
 
-  ItemHomepage(this.title, this.icon, this.color);
+  @override
+  State<MyHomePageBuyer> createState() => _MyHomePageBuyerState();
 }
 
-class ItemCard extends StatelessWidget {
-  final ItemHomepage item;
+class _MyHomePageBuyerState extends State<MyHomePageBuyer> {
+  List<FoodEntry> allFoods = [];
 
-  const ItemCard(this.item, {Key? key}) : super(key: key);
+  @override
+  void initState() {
+    super.initState();
+    _loadFoods();
+  }
+
+  Future<void> _loadFoods() async {
+    final request = context.read<CookieRequest>();
+    try {
+      final foods = await fetchFoods(request);
+      setState(() {
+        allFoods = foods;
+      });
+    } catch (e) {
+      print("Error loading foods: $e");
+    }
+  }
+
+  Future<List<FoodEntry>> fetchFoods(CookieRequest request) async {
+    try {
+      final response = await request.get('https://mangan-yuk-production.up.railway.app/json/');
+      if (response is! List) return [];
+      return response.map((data) => FoodEntry.fromJson(data)).toList();
+    } catch (e) {
+      print('Error fetching foods: $e');
+      return [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: item.color,
-      child: InkWell(
-        onTap: () {
-          if (item.title == "Lihat Daftar Produk") {
-            // Navigate to product list
-          } else if (item.title == "Logout") {
-            // Handle logout
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  item.icon,
-                  color: Colors.white,
-                  size: 30.0,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  item.title,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+    final themeColor = const Color(0xFFB23A48);
 
-class MyHomePageBuyer extends StatelessWidget {
-  MyHomePageBuyer({Key? key}) : super(key: key) {
-    // Initialize items in the constructor
-    items.addAll([
-      ItemHomepage(
-          "Lihat Daftar Produk", Icons.card_giftcard, Colors.deepOrange.shade400),
-      ItemHomepage("Logout", Icons.logout, Colors.red.shade200),
-    ]);
-  }
-
-  final String npm = '2306275651';
-  final String name = 'Athallah Nadhif Yuzak';
-  final String className = 'PBP B';
-  
-  final List<ItemHomepage> items = [];
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Mangan Yuk!',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      drawer: const LeftDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        backgroundColor: themeColor,
+        elevation: 0,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            const Text(
+              "Mangan Yuk!",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.white),
+            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                InfoCard(title: 'NPM', content: npm),
-                InfoCard(title: 'Name', content: name),
-                InfoCard(title: 'Class', content: className),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.favorite_border, color: Colors.white),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.person, color: Colors.white),
+                ),
               ],
-            ),
-            const SizedBox(height: 16.0),
-            Expanded(
-              child: Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      'Mangan yuk!',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GridView.count(
-                      primary: true,
-                      padding: const EdgeInsets.all(20),
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      crossAxisCount: 3,
-                      shrinkWrap: true,
-                      children: items.map((ItemHomepage item) {
-                        return ItemCard(item);
-                      }).toList(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            )
           ],
         ),
       ),
-    );
-  }
-}
-
-class InfoCard extends StatelessWidget {
-  final String title;
-  final String content;
-
-  const InfoCard({super.key, required this.title, required this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2.0,
-      child: Container(
-        width: MediaQuery.of(context).size.width / 3.5,
-        padding: const EdgeInsets.all(16.0),
+      drawer:  LeftDrawer(role: 'buyer', username: widget.username),
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            // Card that holds the image as a background
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                clipBehavior: Clip.antiAlias,
+                elevation: 4,
+                child: Container(
+                  height: 250,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/background1.jpg'),
+                      fit: BoxFit.cover, // fill the card area completely
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Welcome to Mangan Yuk!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 4,
+                            color: Colors.black54,
+                            offset: Offset(2, 2),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
-            const SizedBox(height: 8.0),
-            Text(content),
+
+            // Food cards section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: allFoods.isEmpty
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 50.0),
+                        child: Text(
+                          "No Foods Available",
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      ),
+                    )
+                  : GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
+                        childAspectRatio: 1.6,
+                      ),
+                      itemCount: allFoods.length,
+                      itemBuilder: (context, index) {
+                        final food = allFoods[index];
+                        return Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  topRight: Radius.circular(12),
+                                ),
+                                child: Image.network(
+                                  food.imageUrl,
+                                  height: 150,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      food.name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "Rp${food.price}",
+                                      style: const TextStyle(
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      food.deskripsi,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 8),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
           ],
         ),
       ),

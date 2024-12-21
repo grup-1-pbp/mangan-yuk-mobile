@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:mangan_yuk_mobile/screens/menu.dart';
-import 'package:mangan_yuk_mobile/widgets/left_drawer.dart';
+import 'package:mangan_yuk_mobile/widgets/left_drawer_seller.dart';
 
 class FoodEntryFormPage extends StatefulWidget {
   const FoodEntryFormPage({super.key});
@@ -35,7 +35,7 @@ class _FoodEntryFormPageState extends State<FoodEntryFormPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
-      drawer: const LeftDrawer(),
+      drawer: const CustomDrawer(),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -211,7 +211,7 @@ class _FoodEntryFormPageState extends State<FoodEntryFormPage> {
                         if (_formKey.currentState!.validate()) {
                           try {
                             final response = await request.postJson(
-                              "http://127.0.0.1:8000/create-food/", // Ganti endpoint sesuai backend
+                              "https://mangan-yuk-production.up.railway.app/create-food/", // Ganti endpoint sesuai backend
                               jsonEncode(<String, dynamic>{
                                 'name': _name,
                                 'restaurant': _restaurant,
